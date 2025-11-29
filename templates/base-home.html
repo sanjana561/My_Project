@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- Mirrored from phpstack-1384472-5121645.cloudwaysapps.com/template/html/ki-admin/template/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 17 Jul 2025 07:52:19 GMT -->
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Multipurpose, super flexible, powerful, clean modern responsive bootstrap 5 admin template"
+          name="description">
+    <meta content="admin template, ki-admin admin template, dashboard template, flat admin template, responsive admin template, web app"
+          name="keywords">
+    <meta content="la-themes" name="author">
+    <link href="../static/admin/assets/images/logo/favicon.png" rel="icon" type="image/x-icon">
+    <link href="../static/admin/assets/images/logo/favicon.png" rel="shortcut icon" type="image/x-icon">
+    <title>ED-CARE</title>
+
+    <!-- Animation css -->
+    <link href="../static/admin/assets/vendor/animation/animate.min.css" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/" rel="preconnect">
+    <link crossorigin href="https://fonts.gstatic.com/" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&amp;display=swap"
+          rel="stylesheet">
+
+    <!--flag Icon css-->
+    <link href="../static/admin/assets/vendor/flag-icons-master/flag-icon.css" rel="stylesheet" type="text/css">
+
+    <!-- tabler icons-->
+    <link href="../static/admin/assets/vendor/tabler-icons/tabler-icons.css" rel="stylesheet" type="text/css">
+
+    <!-- apexcharts css-->
+    <link href="../static/admin/assets/vendor/apexcharts/apexcharts.css" rel="stylesheet" type="text/css">
+
+    <!-- glight css -->
+    <link href="../static/admin/assets/vendor/glightbox/glightbox.min.css" rel="stylesheet">
+
+    <!-- Bootstrap css-->
+    <link href="../static/admin/assets/vendor/bootstrap/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+    <!-- simplebar css-->
+    <link href="../static/admin/assets/vendor/simplebar/simplebar.css" rel="stylesheet" type="text/css">
+
+    <!-- App css-->
+    <link href="../static/admin/assets/css/style.css" rel="stylesheet" type="text/css">
+
+    <!-- Responsive css-->
+    <link href="../static/admin/assets/css/responsive.css" rel="stylesheet" type="text/css">
+        <!-- Include the necessary CSS for icons and styling -->
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2j+d7qjNq1B9D49a2aFjF6g6X8W8G7A9pG5XQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+<div class="app-wrapper">
+
+    <div class="loader-wrapper">
+        <div class="loader_24"></div>
+    </div>
+
+    <!-- Menu Navigation starts -->
+    <nav>
+        <div class="app-logo">
+            <a class="logo d-inline-block" href="/dashboard">
+                <img alt="#" src="../../static/assets/img/logo/logo-1.png">
+            </a>
+
+            <span class="bg-light-primary toggle-semi-nav d-flex-center">
+                <i class="ti ti-chevron-right"></i>
+            </span>
+
+            <div class="d-flex align-items-center nav-profile p-3">
+                <span class="h-45 w-45 d-flex-center b-r-10 position-relative bg-danger m-auto">
+                    <img alt="avatar" class="img-fluid b-r-10" src="../static/admin/assets/images/avatar/woman.jpg">
+                    <span class="position-absolute top-0 end-0 p-1 bg-success border border-light rounded-circle"></span>
+                </span>
+           <div class="flex-grow-1 ps-2">
+    <!-- The user name will be populated here -->
+    <h6 class="text-primary mb-0" id="user-name-display"></h6>
+    <!-- The user role will be populated here -->
+    <p class="text-muted f-s-12 mb-0" id="user-role-display"></p>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Find the elements to update
+        const userNameElement = document.getElementById('user-name-display');
+        const userRoleElement = document.getElementById('user-role-display');
+
+        // Retrieve user information from localStorage
+        const user = localStorage.getItem('username');
+
+        console.log(user)
+
+        let userName = 'Guest';
+        let userRole = 'User';
+
+        if (user) {
+            try {
+                // Parse the user object from localStorage
+             
+                
+                // Set the name from the parsed data, with a fallback
+                userName = user|| 'User';
+                // Set the role
+                userRole = 'Teacher';
+            } catch (e) {
+                console.error("Failed to parse user data from localStorage:", e);
+            }
+        }
+
+        // Update the HTML elements with the retrieved data
+        userNameElement.textContent = userName;
+        userRoleElement.textContent = userRole;
+    });
+</script>
+
+
+                <div class="dropdown profile-menu-dropdown">
+                    <a aria-expanded="false" data-bs-auto-close="true" data-bs-placement="top" data-bs-toggle="dropdown"
+                       role="button">
+                        <i class="ti ti-settings fs-5"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-item">
+                            <a class="f-w-500" href="profile.html" target="_blank">
+                                <i class="ph-duotone  ph-user-circle pe-1 f-s-20"></i> Profile Details
+                            </a>
+                        </li>
+                        <li class="dropdown-item">
+                            <a class="f-w-500" href="setting.html" target="_blank">
+                                <i class="ph-duotone  ph-gear pe-1 f-s-20"></i> Settings
+                            </a>
+                        </li>
+                        <li class="dropdown-item">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <a class="f-w-500" href="#">
+                                        <i class="ph-duotone  ph-detective pe-1 f-s-20"></i> Incognito
+                                    </a>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input form-check-primary" id="incognitoSwitch"
+                                               type="checkbox">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="dropdown-item">
+                            <a class="mb-0 text-secondary f-w-500" href="sign_up.html" target="_blank">
+                                <i class="ph-bold  ph-plus pe-1 f-s-20"></i> Add account
+                            </a>
+                        </li>
+
+                        <li class="app-divider-v dotted py-1"></li>
+
+                        <li class="dropdown-item">
+                            <a class="mb-0 text-danger" href="sign_in.html" target="_blank">
+                                <i class="ph-duotone  ph-sign-out pe-1 f-s-20"></i> Log Out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+        <div class="app-nav" id="app-simple-bar">
+            <ul class="main-nav p-0 mt-2">
+                <li class="menu-title ">
+                    <span>Dashboard</span>
+                </li>
+
+              <li class="no-sub">
+ <a href="/dashboard" style=" display:flex; align-items:center; gap: 8px;">
+
+ <img src="../static/app.png" style="width:20px;height:20px;" />
+    Dashboard
+  </a>
+</li>
+
+                <li>
+                    <a aria-expanded="false" data-bs-toggle="collapse" href="#class"  style=" display:flex; align-items:center; gap: 8px;">
+                        <img src="../static/video.png" style="width:20px;height:20px;" />
+                        Classes
+                
+
+                    </a>
+                    <ul class="collapse" id="class">
+                        <li><a href="/add-class">Add</a></li>
+                        <li><a href="/view-classes">List</a></li>
+                    </ul>
+                </li>
+
+
+
+
+                        <li>
+                    <a aria-expanded="false" data-bs-toggle="collapse" href="#students"  style=" display:flex; align-items:center; gap: 8px;">
+                        <img src="../static/student.png" style="width:20px;height:20px;" />
+                        Students
+                
+
+                    </a>
+                    <ul class="collapse" id="students">
+                        <li><a href="/add-students">Add</a></li>
+                        <li><a href="/view-students">List</a></li>
+                    </ul>
+                </li>
+
+
+
+                
+              <li class="no-sub">
+ <a href="/attendance-live" style=" display:flex; align-items:center; gap: 8px;">
+
+ <img src="../static/available.png" style="width:20px;height:20px;" />
+    Attendence Live
+  </a>
+</li>
+
+
+              <li class="no-sub">
+ <a href="/track-attendance" style=" display:flex; align-items:center; gap: 8px;">
+
+ <img src="../static/attendance.png" style="width:20px;height:20px;" />
+    Track Attendence
+  </a>
+</li>
+            <li class="no-sub">
+ <a href="/get-report" style=" display:flex; align-items:center; gap: 8px;">
+
+ <img src="../static/document.png" style="width:20px;height:20px;" />
+    Report
+  </a>
+</li>
+
+          <li class="no-sub">
+  <a href="/api/logout" id="logoutBtn" style="display:flex; align-items:center; gap:8px;">
+    <img src="../static/log-out.png" style="width:20px;height:20px;" />
+    Logout
+  </a>
+</li>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", function(event) {
+      event.preventDefault();
+
+      // Optional: show confirmation
+      Swal.fire({
+        title: "Confirm Logout",
+        text: "Are you sure you want to logout?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Log Out"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch("/api/logout", {
+            method: "POST",
+            headers: {
+              "Authorization": "Bearer " + localStorage.getItem("jwt_token")
+            }
+          })
+          .then(resp => resp.json())
+          .then(data => {
+            // Remove token from local storage
+            localStorage.removeItem("jwt_token");
+            Swal.fire("Logged Out", "You have been logged out.", "success")
+              .then(() => {
+                window.location.href = "/login";
+              });
+          })
+          .catch(err => {
+            Swal.fire("Error", "Logout failed.", "error");
+          });
+        }
+      });
+    });
+  }
+});
+
+</script>
+
+
+
+
+
+            </ul>
+        </div>
+
+        <div class="menu-navs">
+            <span class="menu-previous"><i class="ti ti-chevron-left"></i></span>
+            <span class="menu-next"><i class="ti ti-chevron-right"></i></span>
+        </div>
+
+    </nav>
+    <!-- Menu Navigation ends -->
+
+    <div class="app-content">
+        <div class="">
+
+            <!-- Header Section starts -->
+            <header class="header-main">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-8 col-sm-6 d-flex align-items-center header-left p-0">
+                           <span class="header-toggle ">
+                             <i class="ph ph-squares-four"></i>
+                           </span>
+
+                        </div>
+
+                        <div class="col-4 col-sm-6 d-flex align-items-center justify-content-end header-right p-0">
+
+                            <ul class="d-flex align-items-center">
+
+                     
+
+                                <li class="header-apps">
+                                    <a aria-controls="appscanvasRights"
+                                       class="d-block head-icon bg-light-dark rounded-circle f-s-22 p-2"
+                                       data-bs-target="#appscanvasRights" data-bs-toggle="offcanvas"
+                                       href="#" role="button">
+                                        <i class="ph ph-bounding-box"></i>
+
+                                    </a>
+
+                                    <div aria-labelledby="appscanvasRightsLabel"
+                                         class="offcanvas offcanvas-end header-apps-canvas"
+                                         id="appscanvasRights"
+                                         tabindex="-1">
+                                        <div class="offcanvas-header">
+                                            <h5 class="offcanvas-title" id="appscanvasRightsLabel">Shortcut</h5>
+                                            <div class="app-dropdown flex-shrink-0">
+                                                <a aria-expanded="false" class=" p-1" data-bs-auto-close="outside"
+                                                   data-bs-toggle="dropdown"
+                                                   href="#"
+                                                   role="button">
+                                                    <i class="ph-bold  ph-faders-horizontal f-s-20"></i>
+
+
+                                                </a>
+                                                <ul class="dropdown-menu mb-3">
+                                                    <li class="dropdown-item">
+                                                        <a href="setting.html" target="_blank">
+                                                            Privacy Settings
+                                                        </a>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <a href="setting.html" target="_blank">
+                                                            Account Settings
+                                                        </a>
+                                                    </li>
+                                                    <li class="dropdown-item">
+                                                        <a href="setting.html" target="_blank">
+                                                            Accessibility
+                                                        </a>
+                                                    </li>
+                                                    <li class="dropdown-divider"></li>
+                                                    <li class="dropdown-item border-0">
+                                                        <a aria-expanded="false" data-bs-toggle="dropdown" href="#"
+                                                           role="button">
+                                                            More Settings
+                                                        </a>
+                                                        <ul class="dropdown-menu sub-menu">
+                                                            <li class="dropdown-item">
+                                                                <a href="setting.html" target="_blank">
+                                                                    Backup and Restore
+                                                                </a>
+                                                            </li>
+                                                            <li class="dropdown-item">
+                                                                <a href="setting.html" target="_blank">
+                                                                    <span>Data Usage</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="dropdown-item">
+                                                                <a href="setting.html" target="_blank">
+                                                                    <span>Theme</span>
+                                                                </a>
+                                                            </li>
+                                                            <li class="dropdown-item d-flex align-items-center justify-content-between">
+                                                                <a href="#">
+                                                                    <p class="mb-0">Notification</p>
+                                                                </a>
+                                                                <div class="flex-shrink-0">
+                                                                    <div class="form-check form-switch">
+                                                                        <input class="form-check-input  form-check-primary"
+                                                                               id="notificationSwitch"
+                                                                               type="checkbox">
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="offcanvas-body app-scroll">
+                                            <div class="row row-cols-3 g-2">
+                                                <div class="d-flex-center text-center">
+                                                    <a class="text-light-primary w-100 rounded-3 py-3 px-2 "
+                                                       href="product.html"
+                                                       target="_blank">
+                                                          <span>
+                                                            <i class="ph-light  ph-shopping-bag-open  f-s-30"></i>
+                                                          </span>
+                                                        <p class="mb-0 f-w-500 text-dark">E-shop</p>
+                                                    </a>
+                                                </div>
+                                                <div class="d-flex-center text-center">
+                                                    <a class="text-light-danger w-100 rounded-3 py-3 px-2 "
+                                                       href="email.html"
+                                                       target="_blank">
+                                                         <span>
+                                                           <i class="ph-light  ph-envelope  f-s-30"></i>
+                                                         </span>
+                                                        <p class="mb-0 f-w-500 text-dark">Email</p>
+                                                    </a>
+                                                </div>
+                                                <div class="d-flex-center text-center">
+                                                    <a class="text-light-success w-100 rounded-3 py-3 px-2 "
+                                                       href="chat.html"
+                                                       target="_blank">
+                                                         <span>
+                                                           <i class="ph-light  ph-chat-circle-text  f-s-30"></i>
+                                                         </span>
+                                                        <p class="mb-0 f-w-500 text-dark">Chat</p>
+                                                    </a>
+                                                </div>
+                                                <div class="d-flex-center text-center">
+                                                    <a class="text-light-warning w-100 rounded-3 py-3 px-2 "
+                                                       href="project_app.html"
+                                                       target="_blank">
+                                                         <span>
+                                                           <i class="ph-light  ph-projector-screen-chart  f-s-30"></i>
+                                                         </span>
+                                                        <p class="mb-0 f-w-500 text-dark">Project</p>
+                                                    </a>
+                                                </div>
+                                                <div class="d-flex-center text-center">
+                                                    <a class="text-light-info w-100 rounded-3 py-3 px-2 "
+                                                       href="invoice.html"
+                                                       target="_blank">
+                                                         <span>
+                                                           <i class="ph-light  ph-scroll f-s-30"></i>
+                                                         </span>
+                                                        <p class="mb-0 f-w-500 text-dark">Invoice</p>
+                                                    </a>
+                                                </div>
+                                                <div class="d-flex-center text-center">
+                                                    <a class="text-light-dark w-100 rounded-3 py-3 px-2 "
+                                                       href="blog.html"
+                                                       target="_blank">
+                                                         <span>
+                                                           <i class="ph-light  ph-notebook f-s-30"></i>
+                                                         </span>
+                                                        <p class="mb-0 f-w-500 text-dark">Blog</p>
+                                                    </a>
+                                                </div>
+                                                <div class="d-flex-center text-center">
+                                                    <a class="text-light-danger w-100 rounded-3 py-3 px-2 "
+                                                       href="calendar.html"
+                                                       target="_blank">
+                                                         <span>
+                                                           <i class="ph-light  ph-calendar f-s-30"></i>
+                                                         </span>
+                                                        <p class="mb-0 f-w-500 text-dark">Calender</p>
+                                                    </a>
+                                                </div>
+                                                <div class="d-flex-center text-center">
+                                                    <a class="text-light-warning w-100 rounded-3 py-3 px-2 "
+                                                       href="file_manager.html"
+                                                       target="_blank">
+                                                        <span>
+                                                          <i class="ph-light  ph-folder-open f-s-30"></i>
+                                                        </span>
+                                                        <p class="mb-0 f-w-500 text-dark txt-ellipsis-1">File
+                                                            Manager</p>
+                                                    </a>
+                                                </div>
+                                                <div class="d-flex-center text-center">
+                                                    <a class="text-light-primary w-100 rounded-3 py-3 px-2 "
+                                                       href="gallery.html"
+                                                       target="_blank">
+                                                        <span>
+                                                          <i class="ph-light  ph-google-photos-logo f-s-30"></i>
+                                                        </span>
+                                                        <p class="mb-0 f-w-500 text-dark">Gallery</p>
+                                                    </a>
+                                                </div>
+                                                <div class="d-flex-center text-center">
+                                                    <a class="text-light-success w-100 rounded-3 py-3 px-2 "
+                                                       href="profile.html"
+                                                       target="_blank">
+                                                        <span>
+                                                          <i class="ph-light  ph-users-three f-s-30"></i>
+                                                        </span>
+                                                        <p class="mb-0 f-w-500 text-dark">Profile</p>
+                                                    </a>
+                                                </div>
+                                                <div class="d-flex-center text-center">
+                                                    <a class="text-light-secondary w-100 rounded-3 py-3 px-2 "
+                                                       href="kanban_board.html"
+                                                       target="_blank">
+                                                        <span>
+                                                          <i class="ph-light  ph-selection-foreground f-s-30"></i>
+                                                        </span>
+                                                        <p class="mb-0 f-w-500 text-dark">Task Board</p>
+                                                    </a>
+                                                </div>
+                                                <div class="d-flex-center text-center">
+                                                    <a class="d-flex-center text-light-secondary w-100 h-100 rounded-3 p-2 dashed-1-secondary"
+                                                       href="kanban_board.html"
+                                                       target="_blank">
+                                                        <span>
+                                                          <i class="ph-light  ph-plus f-s-30"></i>
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+                         
+                                <li class="header-dark">
+                                    <div class="sun-logo head-icon bg-light-dark rounded-circle f-s-22 p-2">
+                                        <i class="ph ph-moon-stars"></i>
+                                    </div>
+                                    <div class="moon-logo head-icon bg-light-dark rounded-circle f-s-22 p-2">
+                                        <i class="ph ph-sun-dim"></i>
+                                    </div>
+                                </li>
+
+                          
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!-- Header Section ends -->
+
+
+            {% block body %}{% endblock body %}
+
+             <!-- Footer Section starts-->
+    <footer>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-9 col-12">
+                    <p class="footer-text f-w-600 mb-0">Copyright © 2025 EdCare - AI Attendance System for Teachers. All rights reserved 💖</p>
+                </div>
+              
+            </div>
+        </div>
+    </footer>
+    <!-- Footer Section ends-->
+</div>
+
+{#<!-- modal -->
+<div class="modal" data-bs-backdrop="static" id="welcomeCard" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content welcome-card">
+
+            <div class="modal-body p-0">
+                <div>
+                    <img alt="Welcome Background" class="img-fluid" src="../static/admin/assets/images/modals/welcome-bg.png">
+                    <div>
+                        <img src="../static/admin/assets/images/modals/welcome-rocket.png" class="modal-rocket img-fluid" alt="Rocket">
+                    </div>
+                </div>
+                <div class="text-end position-absolute end-0 top-0 p-3">
+                    <i class="ti ti-x fs-5 text-dark f-w-600" data-bs-dismiss="modal"></i>
+                </div>
+                <div class="text-center position-relative welcome-card-content z-1 p-3">
+
+                    <h2 class="f-w-600"> Welcome, Teacher! 👩‍🏫 </h2>
+                    <h6 class="f-s-15 text-dark f-w-500 mx-0 mx-sm-5">
+                        We’re excited to have you join our learning community! Here’s what you can do:
+                    </h6>
+                    <ul class="modal-features-list">
+                        <li class="btn btn-light-primary flex-fill">Create and manage classes</li>
+                        <li class="btn btn-light-primary flex-fill">Upload and share resources</li>
+                        <li class="btn btn-light-primary flex-fill">Track student progress</li>
+                        <li class="btn btn-light-primary flex-fill">Communicate with parents</li>
+                        <li class="btn btn-light-primary flex-fill">Inspire and educate!</li>
+                    </ul>
+                    <div class="mt-3 mb-4">
+                        <button class="btn btn-primary text-white btn-lg" data-bs-dismiss="modal" type="button">
+                            Get Started <i class="ti ti-chevrons-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+#}
+
+<!-- modal -->
+
+<!--customizer-->
+<div id="customizer"></div>
+
+<!-- latest jquery-->
+<script src="../static/admin/assets/js/jquery-3.6.3.min.js"></script>
+
+<!-- Bootstrap js-->
+<script src="../static/admin/assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+
+<!-- Simple bar js-->
+<script src="../static/admin/assets/vendor/simplebar/simplebar.js"></script>
+
+<!-- phosphor js -->
+<script src="../static/admin/assets/vendor/phosphor/phosphor.js"></script>
+
+<!-- Glight js -->
+<script src="../static/admin/assets/vendor/glightbox/glightbox.min.js"></script>
+
+<!-- apexcharts-->
+<script src="../static/admin/assets/vendor/apexcharts/apexcharts.min.js"></script>
+
+<!-- Customizer js-->
+<script src="../static/admin/assets/js/customizer.js"></script>
+
+<!-- Ecommerce js-->
+<script src="../static/admin/assets/js/ecommerce_dashboard.js"></script>
+
+<!-- App js-->
+<script src="../static/admin/assets/js/script.js"></script>
+
+<!-- latest jquery-->
+<script src="../static/admin/assets/vendor/datatable/jquery-3.5.1.js"></script>
+
+<!-- latest jquery-->
+<script src="../static/admin/assets/vendor/datatable/jquery.dataTables.min.js"></script>
+
+<!-- Bootstrap js-->
+<script src="../static/admin/assets/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+
+<!-- Simple bar js-->
+<script src="../static/admin/assets/vendor/simplebar/simplebar.js"></script>
+
+<!-- phosphor js -->
+<script src="../static/admin/assets/vendor/phosphor/phosphor.js"></script>
+
+<!-- data table js-->
+<script src="../static/admin/assets/js/ready_to_use_table.js"></script>
+
+<!-- App js-->
+<script src="../static/admin/assets/js/script.js"></script>
+
+<!-- Customizer js-->
+<script src="../static/admin/assets/js/customizer.js"></script>
+
+
+</body>
+
+
+<!-- Mirrored from phpstack-1384472-5121645.cloudwaysapps.com/template/html/ki-admin/template/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 17 Jul 2025 07:52:20 GMT -->
+</html>

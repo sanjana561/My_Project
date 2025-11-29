@@ -1,0 +1,421 @@
+{% extends "base-home.html" %}
+
+{% block body %}
+
+<!-- Include required stylesheets -->
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+    .app-datatable-default {
+        min-height: 200px;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    .student-list-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1050;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+        justify-content: center;
+        align-items: center;
+    }
+    .modal.is-visible {
+        display: flex;
+    }
+    .modal-content {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 500px;
+        position: relative;
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    .modal-header h5 {
+        margin: 0;
+    }
+    .close-button {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        line-height: 1;
+    }
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 20px;
+        border-top: 1px solid #ddd;
+        margin-top: 20px;
+    }
+</style>
+
+<main>
+    <div class="container-fluid">
+        <div class="row m-1">
+            <div class="col-12">
+                <h4 class="main-title">Students List</h4>
+                <ul class="app-line-breadcrumbs mb-3">
+                    <li>
+                        <a class="f-s-14 f-w-500" href="{{ url_for('dashboard') }}">
+                            <i class="ph-duotone ph-house f-s-16"></i> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a class="f-s-14 f-w-500" href="{{ url_for('get_all_classes') }}">
+                            Class List
+                        </a>
+                    </li>
+                    <li class="active">Students</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="student-list-header">
+                                <h5>Select a Class:</h5>
+                                <select id="class-select" class="form-select w-auto">
+                                    <option value="" disabled selected>Loading classes...</option>
+                                </select>
+                            </div>
+                            <a href="/add-students" id="add-student-btn" class="btn btn-primary btn-sm " aria-disabled="true">Add Student</a>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="app-scroll table-responsive app-datatable-default">
+                            <table class="table table-striped" id="student-table">
+                                <thead>
+                                    <tr>
+                                        <th>Profile</th>
+                                        <th>Name</th>
+                                        <th>Student ID</th>
+                                        <th>Parent Email</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="initial-message-row">
+                                        <td colspan="4" class="text-center">Please select a class to view students.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div id="edit-modal" class="modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Student</h5>
+                <button type="button" class="close-button" aria-label="Close">&times;</button>
+            </div>
+            <form id="edit-student-form" enctype="multipart/form-data">
+                <input type="hidden" id="edit-student-id" />
+                <div class="mb-3">
+                    <label for="edit-student-name" class="form-label">Student Name</label>
+                    <input type="text" id="edit-student-name" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label for="edit-student-id-number" class="form-label">Student ID Number</label>
+                    <input type="text" id="edit-student-id-number" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label for="edit-student-image" class="form-label">Profile Image</label>
+                    <input type="file" id="edit-student-image" class="form-control" accept="image/*" />
+                    <img id="edit-image-preview" alt="Image Preview" style="width:80px; height:80px; object-fit: cover; border-radius: 50%; margin-top: 10px; display:none;" />
+                </div>
+
+                <div class="mb-3">
+    <label for="edit-parent-email" class="form-label">Parent Email</label>
+    <input type="email" id="edit-parent-email" class="form-control" required />
+</div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close-button">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="go-top">
+        <span class="progress-value"><i class="ti ti-arrow-up"></i></span>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const tableBody = document.querySelector('#student-table tbody');
+        const classSelect = document.getElementById('class-select');
+        const addStudentBtn = document.getElementById('add-student-btn');
+
+        const editModal = document.getElementById('edit-modal');
+        const closeButtons = editModal.querySelectorAll('.close-button');
+        const editForm = document.getElementById('edit-student-form');
+        const editStudentIdInput = document.getElementById('edit-student-id');
+        const editStudentNameInput = document.getElementById('edit-student-name');
+        const editStudentIdNumberInput = document.getElementById('edit-student-id-number');
+        const editImageInput = document.getElementById('edit-student-image');
+        const editImagePreview = document.getElementById('edit-image-preview');
+        const editParentEmailInput = document.getElementById('edit-parent-email');
+
+        function hideModal() {
+            editModal.classList.remove('is-visible');
+        }
+
+  function showModal(id, name, idNumber, parentEmail = '', imagePath = null) {
+    editStudentIdInput.value = id;
+    editStudentNameInput.value = name;
+    editStudentIdNumberInput.value = idNumber;
+    editParentEmailInput.value = parentEmail;
+
+    if (imagePath) {
+        editImagePreview.src = `/static/${imagePath}`;
+        editImagePreview.style.display = 'block';
+    } else {
+        editImagePreview.src = '';
+        editImagePreview.style.display = 'none';
+    }
+
+    editImageInput.value = '';
+    editModal.classList.add('is-visible');
+}
+        closeButtons.forEach(btn => btn.addEventListener('click', hideModal));
+        editModal.addEventListener('click', e => { if (e.target === editModal) hideModal() });
+
+        editImageInput.addEventListener('change', () => {
+            const file = editImageInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    editImagePreview.src = e.target.result;
+                    editImagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                editImagePreview.src = '';
+                editImagePreview.style.display = 'none';
+            }
+        });
+
+ editForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const studentId = editStudentIdInput.value;
+    const studentName = editStudentNameInput.value;
+    const studentIdNumber = editStudentIdNumberInput.value;
+    const parentEmail = editParentEmailInput.value;  // ✅ new
+    const accessToken = localStorage.getItem('jwt_token');
+
+    let imageBase64 = null;
+    const file = editImageInput.files[0];
+    if (file) {
+        imageBase64 = await new Promise((res, rej) => {
+            const reader = new FileReader();
+            reader.onload = () => res(reader.result);
+            reader.onerror = rej;
+            reader.readAsDataURL(file);
+        });
+    }
+
+    const payload = {
+        name: studentName,
+        student_id_number: studentIdNumber,
+        parent_email: parentEmail  // ✅ include email
+    };
+    if (imageBase64) {
+        payload.image_data = imageBase64;
+    }
+
+    try {
+        const response = await fetch(`/api/students/${studentId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${accessToken}` },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.error || 'Failed to update student.');
+        }
+
+        Swal.fire('Updated!', 'Student details updated successfully.', 'success');
+        hideModal();
+        fetchStudents(classSelect.value);
+    } catch (err) {
+        Swal.fire('Error', err.message, 'error');
+    }
+});
+
+        async function fetchClasses() {
+            const accessToken = localStorage.getItem('jwt_token');
+            if (!accessToken) {
+                Swal.fire('Error', 'You must be logged in to view classes.', 'error').then(() => {
+                    window.location.href = "{{ url_for('login_user') }}";
+                });
+                return;
+            }
+            try {
+                const res = await fetch('/api/classes', { headers: { Authorization: `Bearer ${accessToken}` } });
+                if (!res.ok) throw new Error('Failed to load classes.');
+                const data = await res.json();
+
+                classSelect.innerHTML = '';
+                if (!data.classes.length) {
+                    classSelect.innerHTML = '<option disabled>No classes found.</option>';
+                    addStudentBtn.classList.add('disabled');
+                    return;
+                }
+                classSelect.innerHTML = '<option selected disabled>Select a class...</option>';
+                data.classes.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.id;
+                    option.textContent = c.name;
+                    classSelect.appendChild(option);
+                });
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+                classSelect.innerHTML = '<option disabled>Error loading classes</option>';
+                addStudentBtn.classList.add('disabled');
+            }
+        }
+
+        async function fetchStudents(classId) {
+            if (!classId) {
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-center">Please select a class to view students.</td></tr>';
+                addStudentBtn.classList.add('disabled');
+                return;
+            }
+            const accessToken = localStorage.getItem('jwt_token');
+            try {
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-center">Loading...</td></tr>';
+                addStudentBtn.classList.remove('disabled');
+                addStudentBtn.href = `/add-students`;
+                const res = await fetch(`/api/classes/${classId}/students`, { headers: { Authorization: `Bearer ${accessToken}` } });
+                if (!res.ok) throw new Error('Failed to retrieve students.');
+                const data = await res.json();
+
+                tableBody.innerHTML = '';
+                if (!data.students.length) {
+                    tableBody.innerHTML = '<tr><td colspan="4" class="text-center">No students found.</td></tr>';
+                    return;
+                }
+                data.students.forEach(student => {
+                    const imgSrc = student.image_path ? `/static/${student.image_path}` : '/static/images/default-avatar.png';
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><img src="${imgSrc}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;margin-left:30px;" alt="Profile"/></td>
+                        <td>${student.name}</td>
+                        <td>${student.student_id_number}</td>
+                        <td>${student.parent_email}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-info btn-sm edit-btn" 
+                                        data-id="${student.id}" 
+                                        data-name="${student.name}" 
+                                        data-number="${student.student_id_number}" 
+                                         data-email="${student.parent_email}" 
+                                        data-img="${student.image_path || ''}" 
+                                        title="Edit Student"><i class="fas fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm delete-btn" data-id="${student.id}" title="Delete Student"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </td>`;
+                    tableBody.appendChild(row);
+                });
+            } catch (err) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">${err.message}</td></tr>`;
+            }
+        }
+
+        async function deleteStudent(studentId) {
+            const confirm = await Swal.fire({
+                title: 'Confirm Delete',
+                text: "Are you sure you want to delete this student?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete!',
+                cancelButtonText: 'Cancel',
+            });
+            if (!confirm.isConfirmed) return;
+
+            const accessToken = localStorage.getItem('jwt_token');
+            try {
+                const res = await fetch(`/api/students/${studentId}`, {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${accessToken}` }
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error || 'Failed to delete student.');
+                }
+                Swal.fire('Deleted!', 'Student deleted successfully.', 'success');
+                fetchStudents(classSelect.value);
+            } catch (err) {
+                Swal.fire('Error', err.message, 'error');
+            }
+        }
+
+        tableBody.addEventListener('click', e => {
+            const target = e.target.closest('button');
+            if (!target) return;
+
+           if (target.classList.contains('edit-btn')) {
+    const id = target.dataset.id;
+    const name = target.dataset.name;
+    const number = target.dataset.number;
+    const email = target.dataset.email || ''; // ✅ new
+    const img = target.dataset.img;
+    showModal(id, name, number, email, img);
+}
+
+            if (target.classList.contains('delete-btn')) {
+                const id = target.dataset.id;
+                if (id) {
+                    deleteStudent(id);
+                }
+            }
+        });
+
+        classSelect.addEventListener('change', e => {
+            const id = e.target.value;
+            fetchStudents(id);
+            addStudentBtn.classList.remove('disabled');
+            addStudentBtn.href = `/add-students`;
+        });
+
+        // Initial classes fetch
+        fetchClasses();
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+
+    <div id="popup-search-box">
+        <div class="box-inner-wrap d-flex align-items-center">
+            <form id="form" action="#" method="get" role="search">
+                <input id="popup-search" type="text" name="s" placeholder="Type keywords here...">
+            </form>
+            <div class="search-close"><i class="fa-sharp fa-regular fa-xmark"></i></div>
+        </div>
+    </div>
+    <!-- /#popup-search-box -->
+
+    <div class="mobile-side-menu">
+        <div class="side-menu-content">
+            <div class="side-menu-head">
+                <a href="index-2.html"><img src="../static/assets/img/logo/logo-1.png" alt="logo"></a>
+                <button class="mobile-side-menu-close"><i class="fa-regular fa-xmark"></i></button>
+            </div>
+            <div class="side-menu-wrap"></div>
+            <ul class="side-menu-list">
+                <li><i class="fa-light fa-location-dot"></i>Address : <span>Amsterdam, 109-74</span></li>
+                <li><i class="fa-light fa-phone"></i>Phone : <a href="tel:+01569896654">+01 569 896 654</a></li>
+                <li><i class="fa-light fa-envelope"></i>Email : <a href="mailto:info@example.com">info@example.com</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- /.mobile-side-menu -->
+    <div class="mobile-side-menu-overlay"></div>
+
+    <div id="preloader">
+        <div class="spinner-logo"><img src="../static/assets/img/favicon.png" alt="logo"></div>
+        <div class="spinner"></div>
+    </div>
+    <!-- ./ preloader -->
+
+    <section class="page-header">
+        <div class="bg-item">
+            <div class="bg-img" data-background="../static/assets/img/bg-img/page-header-bg.png"></div>
+            <div class="overlay"></div>
+            <div class="shapes">
+                <div class="shape shape-1"><img src="../static/assets/img/shapes/page-header-shape-1.png" alt="shape">
+                </div>
+                <div class="shape shape-2"><img src="../static/assets/img/shapes/page-header-shape-2.png" alt="shape">
+                </div>
+                <div class="shape shape-3"><img src="../static/assets/img/shapes/page-header-shape-3.png" alt="shape">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="page-header-content">
+                <h1 class="title">Teacher Registration</h1>
+                <h4 class="sub-title"><a class="home" href="index-2.html">Home </a><span class="icon">/</span><a
+                        class="inner-page" href="#"> Register</a></h4>
+            </div>
+        </div>
+    </section>
+    <!-- ./ page-header -->
+
+    <section class="contact-section pt-120 pb-120">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7 col-md-9">
+                    <div class="blog-contact-form contact-form register-form-wrap">
+                        <h2 class="title mb-0">Create Your Account</h2>
+                        <p class="mb-30 mt-10">Fill in your details to register for the attendance system.</p>
+                        <div class="request-form">
+                            <form id="registerForm" class="form-horizontal">
+                                <div class="form-group row">
+                                    <div class="col-md-12">
+                                        <div class="form-item">
+                                            <input type="text" id="name" name="name" class="form-control"
+                                                placeholder="Your Full Name" required>
+                                            <div class="icon"><i class="fa-regular fa-address-card"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-12">
+                                        <div class="form-item">
+                                            <input type="email" id="email" name="email" class="form-control"
+                                                placeholder="Your Email" required>
+                                            <div class="icon"><i class="fa-sharp fa-regular fa-envelope"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-12">
+                                        <div class="form-item">
+                                            <input type="text" id="username" name="username" class="form-control"
+                                                placeholder="Choose a Username" required>
+                                            <div class="icon"><i class="fa-regular fa-user"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-12">
+                                        <div class="form-item">
+                                            <input type="password" id="password" name="password" class="form-control"
+                                                placeholder="Password" required>
+                                            <div class="icon"><i class="fa-solid fa-lock"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-12">
+                                        <div class="form-item">
+                                            <input type="password" id="confirm_password" name="confirm_password"
+                                                class="form-control" placeholder="Confirm Password" required>
+                                            <div class="icon"><i class="fa-solid fa-lock"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="submit-btn">
+                                    <button id="registerSubmit" class="ed-primary-btn header-btn" type="submit"
+                                        style="background:#07A698;">Register</button>
+                                </div>
+                            </form>
+                            <!-- Removed the form-messages div as SweetAlert2 will be used -->
+                            <div class="login-link">
+                                Already have an account? <a href="/login" style="color:#07A698;">Login Here</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const registerForm = document.getElementById('registerForm');
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirm_password');
+
+            registerForm.addEventListener('submit', async function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const name = nameInput.value;
+                const email = emailInput.value;
+                const username = usernameInput.value;
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+
+                // Client-side validation for password match
+                if (password !== confirmPassword) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Passwords do not match!',
+                    });
+                    return; // Stop form submission
+                }
+
+                try {
+                    const response = await fetch('/api/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name, email, username, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // Registration successful
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: data.message + ". Redirecting to login page...",
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            // Optionally clear form fields
+                            registerForm.reset();
+                            window.location.href = '/login'; // Redirect to your login page
+                        });
+                    } else {
+                        // Registration failed
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Registration Failed',
+                            text: data.error || 'Registration failed. Please try again.',
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error during registration:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An unexpected error occurred. Please try again later.',
+                    });
+                }
+            });
+        });
+    </script>
+
+    <!-- ./ contact-section -->
+{% endblock body %}

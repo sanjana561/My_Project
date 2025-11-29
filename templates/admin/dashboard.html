@@ -1,0 +1,135 @@
+{% extends "base-home.html" %}
+
+
+
+{% block body %}
+<main>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 eshop-cards-container">
+                <div class="row g-3 justify-content-start"> 
+
+                    <div class="col-md-6 col-lg-3 col-xl-3 col-xxl-2">
+                        <div class="card" >
+                            <span class="bg-primary h-50 w-50 d-flex-center rounded-circle m-auto eshop-icon-box">
+                                <i class="ph ph-users f-s-24"></i>
+                            </span>
+                            <div class="card-body eshop-cards">
+                                <div class="overflow-hidden">
+                                    <h3 class="text-primary mb-0" id="total_students">0</h3>
+                                    <p class="mg-b-35 f-w-600 text-dark-800 txt-ellipsis-1">Total Students</p>
+                                    <span class="badge bg-light-primary">View Report</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3 col-xl-3 col-xxl-2">
+                        <div class="card" >
+                            <span class="bg-danger h-50 w-50 d-flex-center rounded-circle m-auto eshop-icon-box">
+                                <i class="ph ph-x-circle f-s-24"></i>
+                            </span>
+                            <div class="card-body eshop-cards">
+                                <h3 class="text-danger mb-0" id="absent_today">0</h3>
+                                <p class="mg-b-35 f-w-600 text-dark-800 txt-ellipsis-1">Students Absent</p>
+                                <span class="badge bg-light-danger">Overall Today</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 col-lg-3 col-xl-3 col-xxl-2">
+                        <div class="card">
+                            <span class="bg-info h-50 w-50 d-flex-center rounded-circle m-auto eshop-icon-box">
+                                <i class="ph-duotone ph-chalkboard f-s-24"></i>
+                            </span>
+                            <div class="card-body eshop-cards">
+                                <h3 class="text-info mb-0 txt-ellipsis-1" id="classes_attended_today">0</h3>
+                                <p class="mg-b-35 f-w-600 text-dark-800 txt-ellipsis-1">Classes Attended</p>
+                                <span class="badge bg-light-info">Periods Recorded</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3 col-xl-3 col-xxl-3">
+                        <div class="card">
+                            <span class="bg-warning h-50 w-50 d-flex-center rounded-circle m-auto eshop-icon-box">
+                                <i class="ph-duotone ph-certificate f-s-24"></i>
+                            </span>
+                            <div class="card-body eshop-cards">
+                                <h3 class="text-warning mb-0 txt-ellipsis-1" id="top_class_percent">0%</h3>
+                                <p class="mg-b-35 f-w-600 text-dark-800 txt-ellipsis-1">Top Class Rate</p>
+                                <span class="badge bg-light-dark" id="top_class_name">N/A</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-3 col-xl-3 col-xxl-3">
+                        <div class="card">
+                            <span class="bg-success h-50 w-50 d-flex-center rounded-circle m-auto eshop-icon-box">
+                                <i class="ph-duotone ph-user-circle-plus f-s-24"></i>
+                            </span>
+                            <div class="card-body eshop-cards">
+                                <h3 class="text-success mb-0" id="new_students">0</h3>
+                                <p class="mg-b-35 f-w-600 text-dark-800 txt-ellipsis-1">New Students</p>
+                                <span class="badge bg-light-success">This Month</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div class="go-top">
+    <span class="progress-value">
+        <i class="ti ti-chevron-up"></i>
+    </span>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        const token = localStorage.getItem("jwt_token"); 
+
+        if (!token) {
+            console.error("JWT token not found. Please log in.");
+            return;
+        }
+
+        const res = await fetch("/dashboard/data", {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        // Check for 500 error or bad response
+        if (!res.ok) {
+            const errorText = await res.text();
+            console.error("Failed to fetch dashboard data:", res.status, errorText);
+            // Display a user-friendly error on the dashboard if the fetch fails completely
+            document.getElementById("total_students").textContent = "ERR";
+            throw new Error("Failed to fetch dashboard data");
+        }
+        
+        const data = await res.json();
+
+        // Populate dashboard cards
+        document.getElementById("total_students").textContent = data.total_students || 0;
+        document.getElementById("absent_today").textContent = data.absent_today || 0;
+        document.getElementById("classes_attended_today").textContent = data.classes_attended_today || 0; 
+        
+        // Populate Top Class
+        const topClassPercent = data.top_class.attendance_rate || 0;
+        document.getElementById("top_class_percent").textContent = topClassPercent + "%";
+        document.getElementById("top_class_name").textContent = data.top_class.name || "N/A";
+        
+        // Populate New Students
+        document.getElementById("new_students").textContent = data.new_students || 0; 
+        
+    } catch (err) {
+        console.error("Error loading dashboard data:", err);
+    }
+});
+</script>
+
+{% endblock body %}

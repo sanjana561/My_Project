@@ -1,0 +1,527 @@
+{% extends "base.html" %}
+
+
+{% block body %}
+
+        <div id="popup-search-box">
+            <div class="box-inner-wrap d-flex align-items-center">
+                <form id="form" action="#" method="get" role="search">
+                    <input id="popup-search" type="text" name="s" placeholder="Type keywords here...">
+                </form>
+                <div class="search-close"><i class="fa-sharp fa-regular fa-xmark"></i></div>
+            </div>
+        </div>
+        <!-- /#popup-search-box -->
+
+        <div class="mobile-side-menu">
+            <div class="side-menu-content">
+                <div class="side-menu-head">
+                    <a href="index-2.html"><img src="../static/assets/img/logo/logo-1.png" alt="logo"></a>
+                    <button class="mobile-side-menu-close"><i class="fa-regular fa-xmark"></i></button>
+                </div>
+                <div class="side-menu-wrap"></div>
+                <ul class="side-menu-list">
+                    <li><i class="fa-light fa-location-dot"></i>Address : <span>Amsterdam, 109-74</span></li>
+                    <li><i class="fa-light fa-phone"></i>Phone : <a href="tel:+01569896654">+01 569 896 654</a></li>
+                    <li><i class="fa-light fa-envelope"></i>Email : <a href="mailto:info@example.com">info@example.com</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- /.mobile-side-menu -->
+        <div class="mobile-side-menu-overlay"></div>
+
+        <div id="preloader">
+            <div class="spinner-logo"><img src="../static/assets/img/favicon.png" alt="logo"></div>
+            <div class="spinner"></div>
+        </div>
+        <!-- ./ preloader -->
+
+    <section class="hero-section-12 overflow-hidden">
+        <div class="shapes">
+            <div class="shape-1"><img src="../static/assets/img/new-update-3/shapes/hero-shape-1.png" alt="shape"></div>
+            <div class="shape-2"><img src="../static/assets/img/new-update-3/shapes/hero-shape-2.png" alt="shape"></div>
+            <div class="shape-3"><img src="../static/assets/img/new-update-3/shapes/hero-shape-3.png" alt="shape"></div>
+        </div>
+        <div class="hero-img-box hero-img-box-1">
+            <div class="hero-img-1"><img src="../static/assets/img/new-update-3/hero-img-1.png" alt="hero"></div>
+            <div class="hero-img-2"><img src="../static/assets/img/new-update-3/hero-img-2.png" alt="hero"></div>
+        </div>
+        <div class="hero-img-box hero-img-box-2">
+            <div class="hero-img-1"><img src="../static/assets/img/new-update-3/hero-img-3.png" alt="hero"></div>
+            <div class="hero-img-2"><img src="../static/assets/img/new-update-3/hero-img-4.png" alt="hero"></div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="hero-content hero-content-5 hero-content-10 hero-content-12 text-center">
+                    <h1 class="title mb-0">Streamline Your Class Attendance with <br><span>AI Power</span></h1>
+                    <ul class="hero-list">
+                        <li><i class="fa-sharp fa-solid fa-circle-check"></i>Automated Face Recognition</li>
+                        <li><i class="fa-sharp fa-solid fa-circle-check"></i>Real-time Attendance Tracking</li>
+                        <li><i class="fa-sharp fa-solid fa-circle-check"></i>Comprehensive Reporting</li>
+                        <li><i class="fa-sharp fa-solid fa-circle-check"></i>Easy Student Management</li>
+                    </ul>
+                    <div class="hero-form">
+                        <form action="#"> <!-- Action changed to # as it's a search within the app -->
+                            <input type="text" id="attendance_search" name="attendance_search" class="form-control" placeholder="Search for a student or class...">
+                        </form>
+                        <button class="ed-primary-btn">Search</button>
+                    </div>
+                    <h3 class="bottom-title">Managing <span>Your Classes</span> and <span>Student Attendance</span> Daily</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ./ hero-section-12 -->
+
+        <!-- ./ hero-section -->
+
+
+    <section class="exam-section pt-120 pb-120 overflow-hidden">
+        <div class="container">
+            <div class="section-heading text-center">
+                <h4 class="sub-heading wow fade-in-bottom" data-wow-delay="200ms"><span class="heading-icon"><i class="fa-sharp fa-solid fa-bolt"></i></span>Key Features</h4>
+                <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">Explore the Power of AI-Driven Attendance</h2>
+            </div>
+            <div class="exam-carousel-wrap">
+                <div class="exam-carousel swiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="exam-item">
+                                <div class="exam-thumb">
+                                    <img src="../static/assets/img/new-update-3/exam-img-1.png" alt="Automated Attendance">
+                                </div>
+                                <h3 class="title"><a href="#">Automated Attendance</a></h3>
+                                <p>Effortless daily attendance marking.</p>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="exam-item">
+                                <div class="exam-thumb">
+                                    <img src="../static/assets/img/new-update-3/exam-img-2.png" alt="Facial Recognition">
+                                </div>
+                                <h3 class="title"><a href="#">Accurate Face Recognition</a></h3>
+                                <p>High precision student identification.</p>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="exam-item">
+                                <div class="exam-thumb">
+                                    <img src="../static/assets/img/new-update-3/exam-img-3.png" alt="Real-time Tracking">
+                                </div>
+                                <h3 class="title"><a href="#">Real-time Tracking</a></h3>
+                                <p>Monitor attendance live.</p>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="exam-item">
+                                <div class="exam-thumb">
+                                    <img src="../static/assets/img/new-update-3/exam-img-4.png" alt="Comprehensive Reports">
+                                </div>
+                                <h3 class="title"><a href="#">Detailed Attendance Reports</a></h3>
+                                <p>Generate insights by student or class.</p>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="exam-item">
+                                <div class="exam-thumb">
+                                    <img src="../static/assets/img/new-update-3/exam-img-1.png" alt="Student Management">
+                                </div>
+                                <h3 class="title"><a href="#">Streamlined Student Management</a></h3>
+                                <p>Add, update, and organize student data.</p>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="exam-item">
+                                <div class="exam-thumb">
+                                    <img src="../static/assets/img/new-update-3/exam-img-2.png" alt="Secure Data">
+                                </div>
+                                <h3 class="title"><a href="#">Secure Data Handling</a></h3>
+                                <p>Your data is safe and private.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-arrow">
+                    <div class="swiper-nav swiper-next"><i class="fa-regular fa-arrow-left"></i></div>
+                    <div class="swiper-nav swiper-prev"><i class="fa-regular fa-arrow-right"></i></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <!-- ./ exam-section -->
+
+        <div class="sponsor-section sponsor-2 pt-120 pb-120 bg-grey">
+            <div class="container">
+                <div class="sponsor-carousel swiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <div class="sponsor-item">
+                                <a href="#"><img src="../static/assets/img/sponsor/sponsor-1.png" alt="sponsor"></a>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="sponsor-item">
+                                <a href="#"><img src="../static/assets/img/sponsor/sponsor-2.png" alt="sponsor"></a>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="sponsor-item">
+                                <a href="#"><img src="../static/assets/img/sponsor/sponsor-3.png" alt="sponsor"></a>
+                            </div>
+                        </div>
+                        <div class="swiper-slide">
+                            <div class="sponsor-item">
+                                <a href="#"><img src="../static/assets/img/sponsor/sponsor-4.png" alt="sponsor"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ./ sponsor-section -->
+
+        <section class="fd-section pt-120 pb-120">
+            <div class="container">
+                <div class="section-heading text-center">
+                    <h4 class="sub-heading wow fade-in-bottom" data-wow-delay="200ms"><span class="heading-icon"><i class="fa-sharp fa-solid fa-bolt"></i></span>EdCare Facilities</h4>
+                    <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">Get Amazing Facilities From EdCare</h2>
+                </div>
+                <div class="fd-wrap">
+                    <div class="round-shape"></div>
+                    <div class="fd-content">
+                        <div class="icon"><img src="../static/assets/img/new-update-3/icon/fd-icon-1.png" alt="icon"></div>
+                        <h3 class="title">Get Instant Feedback</h3>
+                        <p>In today's fast-paced digital world, instant feedback has become a crucial component of effective learning and skill development. Whether in education, corporate training, or personal growth, immediate responses to performance help individuals...</p>
+                        <div class="fd-btn">
+                            <a href="contact.html" class="ed-primary-btn">Start Free Trial</a>
+                        </div>
+                    </div>
+                    <div class="fd-thumb">
+                        <img src="../static/assets/img/new-update-3/fd-img-1.png" alt="">
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- ./ fd-section -->
+ <section class="explore-section pt-120 pb-120">
+        <div class="shapes">
+            <div class="shape-1"><img src="../static/assets/img/new-update-3/shapes/explore-shape-1.png" alt="shape"></div>
+            <div class="shape-2"><img src="../static/assets/img/new-update-3/shapes/explore-shape-2.png" alt="shape"></div>
+        </div>
+        <div class="container">
+            <div class="explore-top heading-space">
+                <div class="section-heading mb-0">
+                    <h4 class="sub-heading wow fade-in-bottom" data-wow-delay="200ms"><span class="heading-icon"><i class="fa-sharp fa-solid fa-bolt"></i></span>Simplify Your Workflow</h4>
+                    <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">Powerful Tools for Effective Attendance Management</h2>
+                </div>
+                <div class="swiper-arrow">
+                    <div class="swiper-nav swiper-next"><i class="fa-regular fa-arrow-left"></i></div>
+                    <div class="swiper-nav swiper-prev"><i class="fa-regular fa-arrow-right"></i></div>
+                </div>
+            </div>
+            <div class="explore-carousel swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div class="explore-item">
+                            <div class="explore-thumb">
+                                <img src="../static/assets/img/new-update-3/explore-img-1.png" alt="Manage Classes">
+                            </div>
+                            <div class="explore-content">
+                                <h3 class="title"><a href="my-classes.html">Manage Classes</a></h3>
+                                <p>Create, view, and update all your classes with ease.</p>
+                                <a href="my-classes.html" class="ed-primary-btn">Go to Classes</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="explore-item">
+                            <div class="explore-thumb">
+                                <img src="../static/assets/img/new-update-3/explore-img-2.png" alt="Enroll Students">
+                            </div>
+                            <div class="explore-content">
+                                <h3 class="title"><a href="add-student.html">Enroll New Students</a></h3>
+                                <p>Effortlessly add students and capture their facial data.</p>
+                                <a href="add-student.html" class="ed-primary-btn">Enroll Student</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="explore-item">
+                            <div class="explore-thumb">
+                                <img src="../static/assets/img/new-update-3/explore-img-3.png" alt="Attendance Reports">
+                            </div>
+                            <div class="explore-content">
+                                <h3 class="title"><a href="attendance-report.html">Generate Reports</a></h3>
+                                <p>Access detailed attendance summaries and analytics.</p>
+                                <a href="attendance-report.html" class="ed-primary-btn">View Reports</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+        <!-- ./ explore-section -->
+
+ <section class="testimonial-section-12 pt-120 pb-120 overflow-hidden">
+        <div class="bg-shape"></div>
+        <div class="section-heading text-center">
+            <h4 class="sub-heading wow fade-in-bottom" data-wow-delay="200ms"><span class="heading-icon"><i class="fa-sharp fa-solid fa-bolt"></i></span>Hear from Our Users</h4>
+            <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">What Educators Say About Our AI Attendance System</h2>
+        </div>
+        <div class="container">
+            <div class="testi-carousel-12 swiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div class="testi-item testi-item-12">
+                            <div class="icon"><i class="fa-solid fa-quote-right"></i></div>
+                            <p>"This AI attendance system has revolutionized how I manage my classes. It's incredibly accurate and saves me so much time every day!"</p>
+                            <div class="testi-author">
+                                <div class="author-img">
+                                    <img src="../static/assets/img/images/testi-author-4.png" alt="testi">
+                                </div>
+                                <h4 class="name">Sarah Chen <span>High School Teacher</span></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testi-item testi-item-12">
+                            <div class="icon"><i class="fa-solid fa-quote-right"></i></div>
+                            <p>"The facial recognition is flawless. No more manual roll calls, and the reports are a game-changer for tracking student engagement."</p>
+                            <div class="testi-author">
+                                <div class="author-img">
+                                    <img src="../static/assets/img/images/testi-author-2.png" alt="testi">
+                                </div>
+                                <h4 class="name">David Lee <span>School Administrator</span></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="testi-item testi-item-12">
+                            <div class="icon"><i class="fa-solid fa-quote-right"></i></div>
+                            <p>"Implementing this system was the best decision for our school. It has significantly improved attendance accuracy and reduced administrative burden."</p>
+                            <div class="testi-author">
+                                <div class="author-img">
+                                    <img src="../static/assets/img/images/testi-author-3.png" alt="testi">
+                                </div>
+                                <h4 class="name">Maria Garcia <span>Principal</span></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+        <!-- ./ testimonial-section -->
+  <section class="counter-section-12 pb-120 overflow-hidden">
+        <div class="container">
+            <div class="counter-wrap-12 row align-items-center">
+                <div class="col-lg-5">
+                    <div class="counter-left-content">
+                        <div class="section-heading mb-20">
+                            <h4 class="sub-heading wow fade-in-bottom" data-wow-delay="200ms"><span class="heading-icon"><i class="fa-sharp fa-solid fa-bolt"></i></span>Our Impact</h4>
+                            <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">Transforming Attendance Management Globally</h2>
+                        </div>
+                        <p class="mb-0">See how our AI-powered system is making a difference in educational institutions worldwide.</p>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="counter-item-wrap-12">
+                        <div class="counter-item-12">
+                            <div class="icon"><img src="../static/assets/img/new-update-3/icon/counter-1.png" alt="icon"></div>
+                            <div class="content">
+                                <h3 class="title"><span class="odometer" data-count="500">0</span><span class="number">+</span></h3>
+                                <p>Classes Managed</p>
+                            </div>
+                        </div>
+                        <div class="counter-item-12">
+                            <div class="icon"><img src="../static/assets/img/new-update-3/icon/counter-2.png" alt="icon"></div>
+                            <div class="content">
+                                <h3 class="title"><span class="odometer" data-count="10000">0</span><span class="number">+</span></h3>
+                                <p>Students Enrolled</p>
+                            </div>
+                        </div>
+                        <div class="counter-item-12">
+                            <div class="icon"><img src="../static/assets/img/new-update-3/icon/counter-3.png" alt="icon"></div>
+                            <div class="content">
+                                <h3 class="title"><span class="odometer" data-count="25000">0</span><span class="number">+</span></h3>
+                                <p>Attendance Records</p>
+                            </div>
+                        </div>
+                        <div class="counter-item-12">
+                            <div class="icon"><img src="../static/assets/img/new-update-3/icon/counter-4.png" alt="icon"></div>
+                            <div class="content">
+                                <h3 class="title"><span class="odometer" data-count="1500">0</span><span class="number">+</span></h3>
+                                <p>Reports Generated</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ./ counter-section -->
+
+    <section class="team-section-12 pt-120 pb-120">
+        <div class="shapes">
+            <div class="shape-1"><img src="../static/assets/img/new-update-3/shapes/team-shape-1.png" alt="shape"></div>
+            <div class="shape-2"><img src="../static/assets/img/new-update-3/shapes/team-shape-2.png" alt="shape"></div>
+            <div class="shape-3"><img src="../static/assets/img/new-update-3/shapes/team-line.png" alt="shape"></div>
+        </div>
+        <div class="container">
+            <div class="section-heading text-center white-content">
+                <h4 class="sub-heading wow fade-in-bottom" data-wow-delay="200ms"><span class="heading-icon"><i class="fa-sharp fa-solid fa-bolt"></i></span>Our Team</h4>
+                <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">Meet the Experts Behind Our AI System</h2>
+            </div>
+            <div class="row gy-lg-0 gy-5">
+                <div class="col-lg-3 col-md-6">
+                    <div class="team-item-12">
+                        <div class="team-thumb">
+                            <img src="../static/assets/img/new-update-3/team-1.png" alt="team">
+                        </div>
+                        <div class="team-content">
+                            <h4 class="title"><a href="#">Dr. Alex Johnson</a></h4>
+                            <span>Lead AI Engineer</span>
+                            <ul class="team-social">
+                                <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                                <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+                                <li><a href="#"><i class="fab fa-behance"></i></a></li>
+                                <li><a href="#"><i class="fab fa-youtube"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="team-item-12 item-2">
+                        <div class="team-thumb">
+                            <img src="../static/assets/img/new-update-3/team-2.png" alt="team">
+                        </div>
+                        <div class="team-content">
+                            <h4 class="title"><a href="#">Dr. Emily White</a></h4>
+                            <span>Machine Learning Specialist</span>
+                            <ul class="team-social">
+                                <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                                <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+                                <li><a href="#"><i class="fab fa-behance"></i></a></li>
+                                <li><a href="#"><i class="fab fa-youtube"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="team-item-12 item-2">
+                        <div class="team-thumb">
+                            <img src="../static/assets/img/new-update-3/team-3.png" alt="team">
+                        </div>
+                        <div class="team-content">
+                            <h4 class="title"><a href="#">Mr. Chris Green</a></h4>
+                            <span>Product Manager</span>
+                            <ul class="team-social">
+                                <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                                <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+                                <li><a href="#"><i class="fab fa-behance"></i></a></li>
+                                <li><a href="#"><i class="fab fa-youtube"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="team-item-12">
+                        <div class="team-thumb">
+                            <img src="../static/assets/img/new-update-3/team-4.png" alt="team">
+                        </div>
+                        <div class="team-content">
+                            <h4 class="title"><a href="#">Ms. Jessica Brown</a></h4>
+                            <span>Customer Support Lead</span>
+                            <ul class="team-social">
+                                <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                                <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+                                <li><a href="#"><i class="fab fa-behance"></i></a></li>
+                                <li><a href="#"><i class="fab fa-youtube"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ./ team-section -->
+
+    <section class="blog-section-12 pt-120 pb-120">
+        <div class="shapes">
+            <div class="shape-1"><img src="../static/assets/img/new-update-3/shapes/blog-shape-1.png" alt="shape"></div>
+            <div class="shape-2"><img src="../static/assets/img/new-update-3/shapes/blog-shape-2.png" alt="shape"></div>
+        </div>
+        <div class="container">
+            <div class="blog-top heading-space">
+                <div class="section-heading mb-0 white-content">
+                    <h4 class="sub-heading wow fade-in-bottom" data-wow-delay="200ms"><span class="heading-icon"><i class="fa-sharp fa-solid fa-bolt"></i></span>Latest Insights</h4>
+                    <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">News & Updates on AI Attendance</h2>
+                </div>
+                <div class="blog-top-btn">
+                    <a href="blog-grid.html" class="ed-primary-btn">View All Articles</a>
+                </div>
+            </div>
+            <div class="row gy-lg-0 gy-4 justify-content-center post-card-wrap-12">
+                <div class="col-lg-6 col-md-12">
+                    <div class="post-card-2 post-card-3 post-card-9 grid-post">
+                        <div class="post-thumb">
+                            <img src="../static/assets/img/new-update-3/post-1.png" alt="post">
+                        </div>
+                        <div class="post-content-wrap">
+                            <div class="post-content">
+                                <ul class="post-meta">
+                                    <li><i class="fa-sharp fa-regular fa-clock"></i>July 10, 2025</li>
+                                    <li><i class="fa-sharp fa-regular fa-folder"></i>Technology</li>
+                                </ul>
+                                <h3 class="title"><a href="blog-details.html">The Future of Attendance: How AI is Reshaping Education</a></h3>
+                                <a href="blog-details.html" class="read-more">Read More <i class="fa-regular fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12">
+                    <div class="post-card-2 post-card-3 post-card-9 grid-post mb-0">
+                        <div class="post-thumb">
+                            <img src="../static/assets/img/new-update-3/post-2.png" alt="post">
+                        </div>
+                        <div class="post-content-wrap">
+                            <div class="post-content">
+                                <ul class="post-meta">
+                                    <li><i class="fa-sharp fa-regular fa-clock"></i>July 5, 2025</li>
+                                    <li><i class="fa-sharp fa-regular fa-folder"></i>Features</li>
+                                </ul>
+                                <h3 class="title"><a href="blog-details.html">Getting Started: A Quick Guide to Setting Up Your Classes</a></h3>
+                                <a href="blog-details.html" class="read-more">Read More <i class="fa-regular fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+        <!-- ./ blog-section -->
+
+        <section class="subscribe-section pt-120 pb-120">
+            <div class="shapes">
+                <div class="shape-1"><img src="../static/assets/img/new-update/shapes/subscribe-shape-1.png" alt="shape"></div>
+                <div class="shape-2"><img src="../static/assets/img/new-update/shapes/subscribe-shape-2.png" alt="shape"></div>
+            </div>
+            <div class="container">
+                <div class="subscrie-wrap">
+                    <div class="section-heading mb-0">
+                        <h2 class="section-title wow fade-in-bottom" data-wow-delay="400ms">Subscribe for Daily Language <br>Learning Updates</h2>
+                    </div>
+                    <div class="subscribe-form-wrap">
+                        <form action="https://html.rrdevs.net/edcare/mail.php" class="subscribe-form">
+                            <div class="form-item">
+                                <input type="text" id="email-3" name="email" class="form-control" placeholder="Enter Your Email">
+                            </div>
+                            <button class="ed-primary-btn">Subscribe Now<i class="fa-regular fa-arrow-right"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+{% endblock body %}

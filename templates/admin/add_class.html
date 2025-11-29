@@ -1,0 +1,388 @@
+{% extends "base-home.html" %}
+
+{% block body %}
+
+<main>
+    <div class="container-fluid">
+        <div class="row m-1">
+            <div class="col-12 ">
+                <h4 class="main-title">Add Class</h4>
+                <ul class="app-line-breadcrumbs mb-3">
+                    <li class="">
+                        <a class="f-s-14 f-w-500" href="{{ url_for('dashboard') }}">
+                            <span>
+                                <i class="ph-duotone ph-house f-s-16"></i> Dashboard
+                            </span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a class="f-s-14 f-w-500" href="#">Add Class</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Add New Class and Subjects</h5>
+                    </div>
+                    <div class="card-body">
+                        
+                        <!-- <div class="col-12 mb-4 p-3 border rounded" style="background-color: #f8f9fa;">
+                            <h5 class="text-primary mb-2">Logged-in Teacher: <strong id="logged-in-teacher-name-display">Loading...</strong></h5>
+                            <strong class="d-block mb-2">Your Current Assignments (Classes & Subjects):</strong>
+                            <ul id="assignments-display" class="list-unstyled ps-3">
+                                <li>Loading assignments...</li>
+                            </ul>
+                        </div> -->
+                        <form id="add-class-form" class="app-form">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Class Name</label>
+                                        <input name="name" class="form-control" placeholder="E.g., Grade 10 - Section A" required type="text">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Academic Year</label>
+                                        <input name="academic_year" class="form-control" placeholder="E.g., 2024-2025" required type="text">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Assign Teacher Name</label>
+                                        <input name="teacher_name" id="assigned-teacher-input" class="form-control" placeholder="Enter Teacher's Full Name" required type="text">
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <label class="form-label d-block">Subjects Taught in this Class</label>
+                                    <div id="subjects-container">
+                                        <div class="input-group mb-2 subject-input-group">
+                                            <input type="text" name="subjects[]" class="form-control subject-input" placeholder="E.g., Mathematics" required>
+                                            <button class="btn btn-outline-secondary remove-subject-btn" type="button" disabled>
+                                                <i class="ph-duotone ph-x"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <button id="add-subject-btn" class="btn btn-sm btn-outline-success" type="button">
+                                        <i class="ph-duotone ph-plus-circle me-1"></i> Add Subject
+                                    </button>
+                                </div>
+
+                                <div class="col-12 mt-4">
+                                    <div class="text-end">
+                                        <button id="submit-btn" class="btn btn-primary" type="submit">
+                                            Add Class
+                                        </button>
+                                        <button class="btn btn-secondary" type="refresh">Reset</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>    
+     // --- Subject Input Management ---
+
+    const subjectsContainer = document.getElementById('subjects-container');
+    const addSubjectBtn = document.getElementById('add-subject-btn');
+    const initialSubjectInput = subjectsContainer.querySelector('.subject-input-group');
+    
+    // Function to update the disabled state of the remove button
+    function updateRemoveButtons() {
+        const groups = subjectsContainer.querySelectorAll('.subject-input-group');
+        // Only disable the remove button if there's exactly one subject
+        groups.forEach(group => {
+            const btn = group.querySelector('.remove-subject-btn');
+            btn.disabled = groups.length === 1;
+        });
+    }
+    
+    // Function to add a new subject input field
+    function addSubjectInput() {
+        const newGroup = initialSubjectInput.cloneNode(true);
+        const newInput = newGroup.querySelector('.subject-input');
+        const newRemoveBtn = newGroup.querySelector('.remove-subject-btn');
+
+        newInput.value = ''; // Clear the input value
+        newInput.setAttribute('required', 'required'); // Ensure new inputs are required
+        newRemoveBtn.disabled = false; // Enable remove button on new clone
+        
+        newRemoveBtn.addEventListener('click', () => {
+            newGroup.remove();
+            updateRemoveButtons();
+        });
+
+        subjectsContainer.appendChild(newGroup);
+        newInput.focus();
+        updateRemoveButtons();
+    }
+
+    // Initial setup
+    updateRemoveButtons();
+    initialSubjectInput.querySelector('.remove-subject-btn').addEventListener('click', () => {
+        initialSubjectInput.remove();
+        updateRemoveButtons();
+    });
+    addSubjectBtn.addEventListener('click', addSubjectInput);
+
+
+    // --- Form Submission Logic ---
+
+    document.getElementById("add-class-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const accessToken = localStorage.getItem("jwt_token");
+        const submitBtn = document.querySelector("#add-class-form button[type='submit']");
+        
+        if (!accessToken) {
+            // ... (Authentication error handling) ...
+            Swal.fire({icon: 'error', title: 'Auth Required', text: 'You must be logged in to add a class.'}).then(() => {
+                 window.location.href = "{{ url_for('login_user') }}";
+            });
+            return;
+        }
+
+        // UX: Show Loading State
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adding...`;
+
+        const formData = new FormData(this);
+        
+        // 1. Collect all subjects into an array
+        const subjectInputs = subjectsContainer.querySelectorAll('.subject-input');
+        const subjects = Array.from(subjectInputs)
+            .map(input => input.value.trim())
+            .filter(value => value.length > 0); // Filter out empty inputs
+
+        // 2. Build the final payload
+        const payload = {
+            name: formData.get("name").trim(),
+            academic_year: formData.get("academic_year").trim(),
+            teacher_name: formData.get("teacher_name").trim(),
+            // MODIFIED: Send subjects as a JSON string array
+            subjects: JSON.stringify(subjects) 
+        };
+
+        // Client-side validation for subjects
+        if (subjects.length === 0) {
+             Swal.fire({
+                icon: 'warning',
+                title: 'Missing Fields',
+                text: 'Please add at least one subject for the class.'
+            });
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Add Class';
+            return;
+        }
+        
+        // --- Fetch API Call to /api/classes ---
+        fetch("/api/classes", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + accessToken
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+             // ... (Error handling logic remains the same) ...
+             if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem("jwt_token"); 
+                    window.location.href = "{{ url_for('login_user') }}";
+                }
+                return response.json().then(errorData => {
+                    throw new Error(errorData.error || "An unexpected error occurred.");
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.class_id) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Class Created',
+                    text: `${data.name} has been created with ${subjects.length} subjects!`,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                
+                // Resetting the form requires a full reset of the dynamic inputs
+                this.reset();
+                subjectsContainer.innerHTML = ''; // Clear container
+                addSubjectInput(); // Add back the single default input
+
+            } else {
+                 Swal.fire({icon: 'error', title: 'Error', text: data.error || "Something went wrong"});
+            }
+        })
+        .catch(err => {
+            console.error("Fetch Error:", err);
+            Swal.fire({icon: 'error', title: 'Error', text: err.message});
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Add Class';
+        });
+    });
+
+    //  --- Teacher Data Fetching and Display ---
+    const assignedTeacherInput = document.getElementById('assigned-teacher-input');
+    const teacherNameDisplay = document.getElementById('logged-in-teacher-name-display');
+    const assignmentsDisplay = document.getElementById('assignments-display');
+
+    function fetchAndDisplayTeacherInfo() {
+        // Retrieve data from sessionStorage
+        // const teacherFullName = sessionStorage.getItem('user_name') || sessionStorage.getItem('username');
+        const teachingsString = sessionStorage.getItem('teachings');
+        const teacherUsername = sessionStorage.getItem('username');
+        const teacherFullName = sessionStorage.getItem('user_name');
+        
+        // 1. Pre-fill form input and display name
+if (teacherUsername) {
+        // Set the input value to the username
+        assignedTeacherInput.value = teacherUsername; 
+        
+        // Display the Full Name (for user-friendliness), but the form uses the username
+        teacherNameDisplay.textContent = teacherFullName || teacherUsername;
+    }
+
+
+        // 2. Display Assignments as a List
+        if (teachingsString) {
+            try {
+                const teachings = JSON.parse(teachingsString);
+                
+                assignmentsDisplay.innerHTML = ''; // Clear "Loading..."
+                
+                if (teachings.length > 0) {
+                    teachings.forEach(item => {
+                        const listItem = document.createElement('li');
+                        // Display as non-editable bolded text
+                        listItem.innerHTML = `&bull; <strong>Class:</strong> ${item.class || 'N/A'} &ndash; <strong>Subject:</strong> ${item.subject || 'N/A'}`;
+                        assignmentsDisplay.appendChild(listItem);
+                    });
+                } else {
+                    assignmentsDisplay.innerHTML = '<li>You have no existing class assignments.</li>';
+                }
+            } catch (e) {
+                console.error("Error parsing teachings from session storage:", e);
+                assignmentsDisplay.innerHTML = '<li>Error loading assignments.</li>';
+            }
+        } else {
+            assignmentsDisplay.innerHTML = '<li>Assignment data not available (Please log in again).</li>';
+        }
+    }
+
+
+    // 🚀 --- Form Submission Logic ---
+
+    document.getElementById("add-class-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const accessToken = localStorage.getItem("jwt_token");
+        const submitBtn = document.getElementById('submit-btn');
+        
+        if (!accessToken) {
+            Swal.fire({icon: 'error', title: 'Auth Required', text: 'You must be logged in to add a class.'});
+            return;
+        }
+
+        // UX: Show Loading State
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adding...`;
+
+        const formData = new FormData(this);
+        
+        // Collect all subjects into an array
+        const subjectInputs = subjectsContainer.querySelectorAll('.subject-input');
+        const subjects = Array.from(subjectInputs)
+            .map(input => input.value.trim())
+            .filter(value => value.length > 0);
+
+        // Build the final payload
+        const payload = {
+            name: formData.get("name").trim(),
+            academic_year: formData.get("academic_year").trim(),
+            teacher_name: formData.get("teacher_name").trim(),
+            subjects: subjects // Sent as an array
+        };
+
+        if (subjects.length === 0) {
+             Swal.fire({icon: 'warning', title: 'Missing Fields', text: 'Please add at least one subject for the class.'});
+             submitBtn.disabled = false;
+             submitBtn.innerHTML = 'Add Class';
+             return;
+        }
+        
+        // --- Fetch API Call to /api/classes ---
+        fetch("/api/classes", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + accessToken
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+             if (!response.ok) {
+                 if (response.status === 401) {
+                     localStorage.removeItem("jwt_token"); 
+                     window.location.href = "/login";
+                 }
+                 return response.json().then(errorData => {
+                     throw new Error(errorData.error || "Failed to create class.");
+                 });
+             }
+             return response.json();
+        })
+        .then(data => {
+            if (data.class_id) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Class Created',
+                    text: `${data.name} has been assigned to ${data.teacher_name}!`,
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+                
+                // CRITICAL: Update sessionStorage with new assignments
+                sessionStorage.setItem('teachings', JSON.stringify(data.new_teachings));
+                
+                // Reset form and UI
+                document.getElementById("add-class-form").reset();
+                subjectsContainer.innerHTML = '';
+                addSubjectInput(); // Add back the single default input
+                fetchAndDisplayTeacherInfo(); // Re-display assignments
+
+            } else {
+                 Swal.fire({icon: 'error', title: 'Error', text: data.error || "Something went wrong"});
+            }
+        })
+        .catch(err => {
+            console.error("Fetch Error:", err);
+            Swal.fire({icon: 'error', title: 'Error', text: err.message});
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Add Class';
+        });
+    });
+
+    // Run on load
+    document.addEventListener('DOMContentLoaded', fetchAndDisplayTeacherInfo);
+</script>
+
+{% endblock body %}

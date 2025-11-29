@@ -1,0 +1,339 @@
+{% extends "base-home.html" %}
+
+{% block head %}
+    <!-- Place all your styles and CDN links here -->
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2j+d7qjNq1B9D49a2aFjF6g6X8W8G7A9pG5XQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Custom CSS for avatar upload section -->
+    <style>
+        .avatar-upload {
+            position: relative;
+            max-width: 150px;
+            margin: 20px auto;
+        }
+        .avatar-upload .avatar-edit {
+            position: absolute;
+            right: 0px;
+            z-index: 1;
+            top: 10px;
+        }
+        .avatar-upload .avatar-edit input {
+            display: none;
+        }
+        .avatar-upload .avatar-edit input + label {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            margin-bottom: 0;
+            border-radius: 100%;
+            background: #ffffff;
+            border: 1px solid transparent;
+            box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.12);
+            cursor: pointer;
+            font-weight: normal;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .avatar-upload .avatar-edit input + label:hover {
+            background: #f1f1f1;
+            border-color: #d6d6d6;
+        }
+        .avatar-upload .avatar-preview {
+            width: 150px;
+            height: 150px;
+            position: relative;
+            border-radius: 100%;
+            border: 6px solid #f8f8f8;
+            box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+        }
+        .avatar-upload .avatar-preview #imgPreview {
+            width: 100%;
+            height: 100%;
+            border-radius: 100%;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-color: #c0c0c0;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<main>
+    <div class="container-fluid">
+        <!-- Breadcrumb start -->
+        <div class="row m-1">
+            <div class="col-12">
+                <h4 class="main-title">Add Student</h4>
+                <ul class="app-line-breadcrumbs mb-3">
+                    <li class="">
+                        <a class="f-s-14 f-w-500" href="{{ url_for('dashboard') }}">
+                            <span>
+                                <i class="ph-duotone ph-house f-s-16"></i> Dashboard
+                            </span>
+                        </a>
+                    </li>
+                    <li class="">
+                        <a class="f-s-14 f-w-500" href="{{ url_for('get_all_classes') }}">
+                            <span>
+                                Class List
+                            </span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a class="f-s-14 f-w-500" href="#">Add Student</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- Breadcrumb end -->
+
+        <!-- Student Details Form start -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Add Student Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="add-student-form" class="app-form">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-center mb-3">
+                                        <div class="avatar-upload">
+                                            <div class="avatar-edit">
+                                                <input id="imageUpload" accept=".png, .jpg, .jpeg" type="file" required>
+                                                <label for="imageUpload">
+                                                    <i class="fa-solid fa-camera"></i>
+                                                </label>
+                                            </div>
+                                            <div class="avatar-preview">
+                                                <div id="imgPreview" style="background-image: url('https://placehold.co/150x150/EEEEEE/AAAAAA?text=Student');"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Select Class</label>
+                                        <select class="form-select" id="class-select" required>
+                                            <option value="" disabled selected>Loading classes...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Student Name</label>
+                                        <input class="form-control" id="student-name" placeholder="Enter Student's Full Name" required type="text">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Student ID Number</label>
+                                        <input class="form-control" id="student-id-number" placeholder="Enter Student ID Number" required type="text">
+                                    </div>
+                                </div>
+<div class="col-md-6">
+    <div class="mb-3">
+        <label class="form-label">Parent Email</label>
+        <input class="form-control" id="parent-email" placeholder="Enter Parent Email" required type="email">
+    </div>
+</div>
+
+</div>
+
+                                <div class="col-12">
+                                    <div class="text-end">
+                                        <button class="btn btn-primary" id="submit-btn" type="submit">Add Student</button>
+                                        <button class="btn btn-secondary" type="reset">Reset</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Student Details Form end -->
+    </div>
+</main>
+<div class="go-top">
+    <span class="progress-value">
+        <i class="ti ti-arrow-up"></i>
+    </span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById('add-student-form');
+    const imageUpload = document.getElementById('imageUpload');
+    const imgPreview = document.getElementById('imgPreview');
+    const studentNameInput = document.getElementById('student-name');
+    const studentIdInput = document.getElementById('student-id-number');
+    const classSelect = document.getElementById('class-select');
+    const parentEmailInput = document.getElementById('parent-email');
+   
+
+
+    
+    // Function to fetch and populate the class list dropdown
+    async function fetchClassList() {
+        const accessToken = localStorage.getItem("jwt_token");
+        if (!accessToken) {
+            classSelect.innerHTML = `<option value="" disabled>Authentication failed</option>`;
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/classes', {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`
+                }
+            });
+
+            if (response.ok) {
+                const classes = await response.json();
+                classSelect.innerHTML = '<option value="" disabled selected>Select a class</option>';
+                classes.classes.forEach(cls => {
+                    const option = document.createElement('option');
+                    option.value = cls.id;
+                    option.textContent = cls.name;
+                    classSelect.appendChild(option);
+                });
+            } else {
+                classSelect.innerHTML = `<option value="" disabled>Error fetching classes</option>`;
+                console.error('Failed to fetch classes:', await response.text());
+            }
+        } catch (error) {
+            classSelect.innerHTML = `<option value="" disabled>Network error</option>`;
+            console.error('Network or parsing error:', error);
+        }
+    }
+
+    fetchClassList();
+
+    imageUpload.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imgPreview.style.backgroundImage = `url(${e.target.result})`;
+            };
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const classId = classSelect.value;
+        const name = studentNameInput.value;
+        const student_id_number = studentIdInput.value;
+        const file = imageUpload.files[0];
+        
+const parent_email = parentEmailInput.value;
+
+        if (!classId) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Class Required',
+                text: 'Please select a class.'
+            });
+            return;
+        }
+
+        if (!file) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Image Required',
+                text: 'Please upload a student photo.'
+            });
+            return;
+        }
+
+        const accessToken = localStorage.getItem("jwt_token");
+        if (!accessToken) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Authentication Required',
+                text: 'You must be logged in to add a student.'
+            }).then(() => {
+                window.location.href = "{{ url_for('login_user') }}";
+            });
+            return;
+        }
+        
+        Swal.fire({
+            title: 'Adding Student...',
+            allowOutsideClick: false,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        if (!parent_email) {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Parent Email Required',
+        text: 'Please enter parent email.'
+    });
+    return;
+}
+
+
+        try {
+            const imageData = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+
+            const response = await fetch(`/api/classes/${classId}/students`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({
+                    name: name,
+                    student_id_number: student_id_number,
+                           parent_email: parent_email,
+                    image_data: imageData
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to add student.');
+            }
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: data.message
+            }).then(() => {
+                form.reset();
+                imgPreview.style.backgroundImage = "url('https://placehold.co/150x150/EEEEEE/AAAAAA?text=Student')";
+                // Optionally, redirect to a different page after successful submission
+           
+            });
+
+        } catch (error) {
+            console.error('Error adding student:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message
+            });
+        }
+    });
+});
+</script>
+{% endblock body %}

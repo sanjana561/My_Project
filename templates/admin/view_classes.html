@@ -1,0 +1,420 @@
+{% extends "base-home.html" %}
+
+{% block body %}
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<main>
+    <div class="container-fluid">
+        <div class="row m-1">
+            <div class="col-12 ">
+                <h4 class="main-title">Class List</h4>
+                <ul class="app-line-breadcrumbs mb-3">
+                    <li class="">
+                        <a class="f-s-14 f-w-500" href="{{ url_for('dashboard') }}">
+                            <span><i class="ph-duotone ph-house f-s-16"></i> Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a class="f-s-14 f-w-500" href="#">Class List</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5>Classes</h5>
+                        <a href="{{ url_for('add_class') }}" class="btn btn-primary btn-sm">Add New Class</a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="app-scroll table-responsive app-datatable-default">
+                            <table class="table table-striped app-datatable-default w-100 display" id="classes-table">
+                                <thead>
+                                    <tr>
+                                        <th>Class Name</th>
+                                        <th>Description</th>
+                                        <th>Teacher-Assigned</th>
+                                        <th>Number of subject taken</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="classes-table-body">
+                                    <tr id="loading-row">
+                                        <td colspan="5" class="text-center">Loading classes...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div class="go-top">
+    <span class="progress-value"><i class="ti ti-arrow-up"></i></span>
+</div>
+
+
+<div class="modal fade" id="editClassModal" tabindex="-1" aria-labelledby="editClassModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editClassModalLabel">Edit Class</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-class-form">
+                    <input type="hidden" id="edit-class-id">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Class Name</label>
+                        <input type="text" class="form-control" id="edit-name" name="name" placeholder="E.g., II MCA" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Academic Year</label>
+                        <input type="text" class="form-control" id="edit-academic-year" name="academic_year" placeholder="E.g., 2024-2025" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Teacher Name</label>
+                        <input type="text" class="form-control" id="edit-teacher-name" name="teacher_name" placeholder="Enter Teacher's Full Name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block">Subjects</label>
+                        <div id="edit-subjects-container">
+                            </div>
+                        <button id="add-edit-subject-btn" class="btn btn-sm btn-outline-success mt-2" type="button">
+                            <i class="ph-duotone ph-plus-circle me-1"></i> Add Subject
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="save-edit-btn" form="edit-class-form">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+    // --- 1. GLOBAL ELEMENTS ---
+    const tableBody = document.querySelector("#classes-table-body");
+    const subjectsContainer = document.getElementById('edit-subjects-container');
+    const addEditSubjectBtn = document.getElementById('add-edit-subject-btn');
+
+
+    // --- 2. UTILITY FUNCTIONS ---
+
+    function getSubjectsList(subjectsJson) {
+        try {
+            const subjects = JSON.parse(subjectsJson || '[]');
+            // In the table, we show the list of subjects joined by a comma
+            return Array.isArray(subjects) && subjects.length > 0 ? subjects.join(', ') : 'N/A';
+        } catch (e) {
+            return 'N/A';
+        }
+    }
+
+    function getSubjectsFromJSON(subjectsJson) {
+        try {
+            // Parses the JSON string into an array for the edit modal
+            const subjects = JSON.parse(subjectsJson || '[]');
+            return Array.isArray(subjects) ? subjects : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function createEditSubjectInput(value = '', isRemovable = true) {
+        const cleanValue = String(value || '').trim().replace(/^(undefined|null)$/i, '');
+        
+        const template = `
+            <div class="input-group mb-2 edit-subject-input-group">
+                <input type="text" name="subjects[]" class="form-control subject-input" placeholder="E.g., Science" value="${cleanValue}" required>
+                <button class="btn btn-outline-secondary remove-subject-btn" type="button" ${isRemovable ? '' : 'disabled'}>
+                    <i class="ph-duotone ph-x"></i>
+                </button>
+            </div>
+        `;
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = template.trim();
+        const newGroup = tempDiv.firstChild;
+        
+        // Attach remove listener
+        newGroup.querySelector('.remove-subject-btn').addEventListener('click', function() {
+            // Only allow removal if there is more than one subject field
+            if (subjectsContainer.querySelectorAll('.edit-subject-input-group').length > 1) {
+                newGroup.remove();
+            }
+        });
+
+        if (subjectsContainer) {
+            subjectsContainer.appendChild(newGroup);
+        }
+        return newGroup;
+    }
+
+
+    // --- 3. FETCH CLASSES (Table Population) ---
+
+    function fetchClasses() {
+        const accessToken = localStorage.getItem("jwt_token");
+        tableBody.innerHTML = '<tr id="loading-row"><td colspan="5" class="text-center">Loading classes...</td></tr>';
+
+        if (!accessToken) { /* ... handle unauthorized ... */ return; }
+
+        fetch("/api/classes", {
+            method: "GET",
+            headers: { "Authorization": "Bearer " + accessToken }
+        })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401) {
+                    // ... handle session expired ...
+                    localStorage.removeItem("jwt_token");
+                    window.location.href = "{{ url_for('login_user') }}";
+                }
+                return response.json().then(errorData => {
+                    throw new Error(errorData.error || `Server responded with status ${response.status}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            tableBody.innerHTML = ''; 
+            if (data.classes && data.classes.length > 0) {
+                data.classes.forEach(cls => {
+                    const subjectsList = getSubjectsList(cls.subjects_json);
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${cls.name}</td>
+                        <td>${cls.academic_year || 'N/A'}</td>
+                        <td>${cls.teacher_name || 'N/A'}</td>
+                        <td>${subjectsList || 'N/A'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" data-class-id="${cls.id}" title="Edit Class"
+                                onclick="loadClassForEdit(${cls.id})">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" data-class-id="${cls.id}" title="Delete Class"
+                                onclick="deleteClass(${cls.id})">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No classes found.</td></tr>';
+            }
+        })
+        .catch(err => {
+            console.error("Fetch Error:", err);
+            tableBody.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Failed to load classes.</td></tr>';
+            Swal.fire({ icon: 'error', title: 'Error', text: err.message });
+        });
+    }
+
+    // --- 4. LOAD CLASS FOR EDIT (Fixes the Modal display) ---
+
+    window.loadClassForEdit = function(class_id) { 
+        const accessToken = localStorage.getItem("jwt_token");
+        const editNameInput = document.getElementById('edit-name');
+
+        if (!accessToken) { return; }
+        
+        // Display loading state
+        if (editNameInput) editNameInput.value = 'Loading...';
+        if (subjectsContainer) subjectsContainer.innerHTML = 'Loading subjects...';
+
+        fetch(`/api/classes/${class_id}`, {
+            method: "GET",
+            headers: { "Authorization": "Bearer " + accessToken }
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.error || "Failed to fetch class details.");
+                });
+            }
+            return response.json();
+        })
+        .then(classData => {
+            
+            // 1. Static Fields Population & Cleanup
+            document.getElementById('edit-class-id').value = String(classData.id || '').trim();
+            const cleanName = String(classData.name || '').replace(/\|\|/g, '').trim(); 
+            document.getElementById('edit-name').value = cleanName;
+            document.getElementById('edit-academic-year').value = String(classData.academic_year || '').trim();
+            document.getElementById('edit-teacher-name').value = String(classData.teacher_name || '').trim();
+
+            // 2. Dynamic Subject Fields Population
+            subjectsContainer.innerHTML = ''; 
+            const subjects = getSubjectsFromJSON(classData.subjects_json);
+            
+            if (subjects.length > 0) {
+                subjects.forEach((subject, index) => {
+                    // isRemovable is true for all subjects except the first one if there are multiple
+                    createEditSubjectInput(subject, index > 0); 
+                });
+            } else {
+                // If no subjects, create one empty, non-removable field
+                createEditSubjectInput('', false); 
+            }
+
+            // 3. Show the modal using the Bootstrap API
+            const editModalElement = document.getElementById('editClassModal');
+            // Check if Bootstrap is loaded before trying to use its Modal class
+            if (editModalElement && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                 const editModal = new bootstrap.Modal(editModalElement);
+                 editModal.show();
+            } else {
+                // This error will fire if the Bootstrap JS link (CRITICAL FIX) is missing
+                Swal.fire({icon: 'error', title: 'Error', text: "Bootstrap Modal is not available. Ensure bootstrap.bundle.min.js is loaded."});
+            }
+        })
+        .catch(error => {
+            console.error("Error loading class for edit:", error);
+            Swal.fire({icon: 'error', title: 'Loading Error', text: error.message});
+        });
+    }
+
+
+    // --- 5. DOM READY AND LISTENERS ---
+
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchClasses();
+
+        // Listener for adding subjects in the Edit Modal
+        if (addEditSubjectBtn) {
+            addEditSubjectBtn.addEventListener('click', function() {
+                createEditSubjectInput('', true);
+            });
+        }
+        
+        // Form Submission (PUT Request) Logic
+        const editClassForm = document.getElementById("edit-class-form");
+        const saveEditBtn = document.getElementById('save-edit-btn');
+        
+        if (editClassForm) {
+            editClassForm.addEventListener("submit", function(e) {
+                e.preventDefault();
+
+                const accessToken = localStorage.getItem("jwt_token");
+                const classId = document.getElementById('edit-class-id').value;
+                
+                if (!accessToken || !classId) { return; }
+
+                saveEditBtn.disabled = true;
+                saveEditBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...`;
+
+                const subjectInputs = subjectsContainer.querySelectorAll('.subject-input');
+                const subjects = Array.from(subjectInputs)
+                    .map(input => String(input.value || '').trim())
+                    .filter(value => value.length > 0); // Remove empty subject fields
+
+                if (subjects.length === 0) {
+                    Swal.fire({icon: 'warning', title: 'Missing Fields', text: 'Please add at least one subject.'});
+                    saveEditBtn.disabled = false;
+                    saveEditBtn.innerHTML = 'Save Changes';
+                    return;
+                }
+
+                const payload = {
+                    name: document.getElementById('edit-name').value.trim(),
+                    academic_year: document.getElementById('edit-academic-year').value.trim(),
+                    teacher_name: document.getElementById('edit-teacher-name').value.trim(),
+                    subjects_json: JSON.stringify(subjects)
+                };
+
+                fetch(`/api/classes/${classId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + accessToken
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.error || "Failed to update class.");
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Updated!',
+                        text: data.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        const modalElement = document.getElementById('editClassModal');
+                        if (modalElement) {
+                            const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                            if (modalInstance) modalInstance.hide();
+                        }
+                        fetchClasses(); 
+                    });
+                })
+                .catch(err => {
+                    console.error("Update Error:", err);
+                    Swal.fire({icon: 'error', title: 'Error', text: err.message});
+                })
+                .finally(() => {
+                    saveEditBtn.disabled = false;
+                    saveEditBtn.innerHTML = 'Save Changes';
+                });
+            });
+        }
+    });
+
+    // --- 6. DELETE CLASS (External function) ---
+    window.deleteClass = function(classId) {
+        const accessToken = localStorage.getItem("jwt_token");
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/api/classes/${classId}`, {
+                    method: "DELETE",
+                    headers: { "Authorization": "Bearer " + accessToken }
+                })
+                .then(response => {
+                    if (!response.ok) { throw new Error("Failed to delete the class."); }
+                    return response.json();
+                })
+                .then(data => {
+                    Swal.fire('Deleted!', data.message, 'success');
+                    fetchClasses(); 
+                })
+                .catch(err => {
+                    console.error("Delete Error:", err);
+                    Swal.fire({ icon: 'error', title: 'Error', text: err.message });
+                });
+            }
+        });
+    }
+
+    // Expose loadClassForEdit globally
+    window.loadClassForEdit = loadClassForEdit;
+</script>
+{% endblock body %}

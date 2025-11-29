@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <section class="contact-section pt-120 pb-120">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7 col-md-9">
+                    <div class="blog-contact-form contact-form login-form-wrap">
+                        <h2 class="title mb-0">Login to Your Account</h2>
+                        <p class="mb-30 mt-10">Enter your credentials to access the attendance system.</p>
+                        <div class="request-form">
+                            <form id="loginForm" class="form-horizontal">
+                                <div class="form-group row">
+                                    <div class="col-md-12">
+                                        <div class="form-item">
+                                            <input type="text" id="username" name="username" class="form-control"
+                                                placeholder="Username" required>
+                                            <div class="icon"><i class="fa-regular fa-user"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-12">
+                                        <div class="form-item">
+                                            <input type="password" id="password" name="password" class="form-control"
+                                                placeholder="Password" required>
+                                            <div class="icon"><i class="fa-solid fa-lock"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="submit-btn">
+                                    <button id="loginSubmit" class="ed-primary-btn header-btn" type="submit"
+                                        style="background-color: #07A698;">Login</button>
+                                </div>
+                            </form>
+                            <div class="register-link">
+                                Don't have an account? <a href="/register" style="color:#07A698">Register Here</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginForm = document.getElementById('loginForm');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+
+            loginForm.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const username = usernameInput.value;
+                const password = passwordInput.value;
+                const submitBtn = document.getElementById('loginSubmit');
+                
+                // Show Loading State
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Logging in...';
+
+                try {
+                    const response = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        // 🌟 CRITICAL CHANGE: Storing user session data in sessionStorage 🌟
+                        
+                        // 1. Store JWT Token (Use localStorage for persistence across tabs/sessions)
+                        localStorage.setItem('jwt_token', data.token);
+                        
+                        // 2. Store user details (Use sessionStorage for current session validity)
+                        sessionStorage.setItem('user_id', data.user.id);
+                        sessionStorage.setItem('username', data.user.username);
+                        sessionStorage.setItem('user_name', data.user.name); 
+
+                        // 3. Store the critical 'teachings' (class/subject assignments)
+                        // This must be stored as a JSON string to be retrieved later.
+                        if (data.user.teachings) {
+                            sessionStorage.setItem('teachings', JSON.stringify(data.user.teachings));
+                        } else {
+                            sessionStorage.setItem('teachings', '[]'); // Default to empty array if none
+                        }
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Login Successful!',
+                            text: data.message + ". Redirecting to dashboard...",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = '/dashboard';
+                        });
+
+                    } else {
+                        // Login failed
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Login Failed',
+                            text: data.error || 'Invalid username or password. Please try again.',
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error during login:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An unexpected server error occurred. Please try again later.',
+                    });
+                } finally {
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Login';
+                }
+            });
+        });
+    </script>
+{% endblock body %}

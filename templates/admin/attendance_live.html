@@ -1,0 +1,458 @@
+{% extends "base-home.html" %}
+
+{% block body %}
+
+<style>
+  #live-attendance-section {
+    margin: 20px 0;
+  }
+  #live-attendance-status {
+    margin-top: 10px;
+  }
+  #live-attendance-results {
+    margin-top: 20px;
+  }
+  #live-attendance-results ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  #live-attendance-results li.present {
+    color: green;
+    font-weight: bold; /* Make present students stand out */
+  }
+  #live-attendance-results li.absent {
+    color: red;
+  }
+  #camera-stream {
+    max-width: 100%;
+    border-radius: 8px;
+    background: #000;
+  }
+  #capture-btn {
+    margin-top: 10px;
+  }
+</style>
+
+<main>
+  <div class="container-fluid">
+
+    <div id="live-attendance-section" class="card mt-4 p-3">
+      <h5>Live Attendance via Camera</h5>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="class-select-attendance" class="form-label">Select Class for Attendance</label>
+            <select id="class-select-attendance" class="form-select w-auto">
+              <option value="" disabled selected>Loading classes...</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label class="form-label">Period</label>
+            <input name="Period" id="periodSelect" class="form-control" placeholder="E.g., 1 or 1st Period" required type="text">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3">
+            <label for="subject-select-attendance" class="form-label">Subject</label>
+            <select id="subject-select-attendance" class="form-select" name="subject" required>
+                <option value="" disabled selected>Select Class first...</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      <p class="mt-2 p-2 border rounded" id="teacher-name-display" style="background-color: #e9ecef;">
+        Assigned Teacher: <strong>---</strong>
+      </p>
+      
+      <video id="camera-stream" autoplay playsinline style="width:50%;"></video>
+
+      <button id="capture-btn" class="btn btn-primary" style="width:50%" disabled>Capture Attendance</button>
+      <button id="end-session-btn" class="btn btn-danger mt-3" style="width:50%" disabled>End Session</button>
+
+      <div id="live-attendance-status"></div>
+      <div id="live-attendance-results" class="mt-3"></div>
+    
+    </div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    
+    // --- 1. Element References ---
+    const classSelectAttendance = document.getElementById('class-select-attendance');
+    const periodInput = document.getElementById('periodSelect'); 
+    const subjectSelect = document.getElementById('subject-select-attendance');
+    const teacherNameDisplay = document.getElementById('teacher-name-display');
+    const captureBtn = document.getElementById('capture-btn');
+    const endSessionBtn = document.getElementById('end-session-btn');
+    const statusDiv = document.getElementById('live-attendance-status');
+    const resultsDiv = document.getElementById('live-attendance-results');
+    const video = document.getElementById('camera-stream');
+
+    
+    // --- 2. State Management ---
+    function updateButtonStates() {
+      const isReady = classSelectAttendance.value && 
+                      periodInput.value.trim() !== '' && 
+                      subjectSelect.value !== ''; 
+
+      captureBtn.disabled = !(isReady && video.srcObject);
+      endSessionBtn.disabled = !isReady;
+    }
+    
+    // Attach listeners for state changes
+    classSelectAttendance.addEventListener('change', updateButtonStates);
+    periodInput.addEventListener('input', updateButtonStates);
+    subjectSelect.addEventListener('change', updateButtonStates);
+
+
+    // --- 3. Dynamic Subject/Teacher Loading (Unchanged) ---
+    async function loadClassDetails(classId) {
+      const accessToken = localStorage.getItem('jwt_token');
+      if (!classId || !accessToken) return;
+
+      // Reset fields and display
+      subjectSelect.innerHTML = '<option value="" disabled selected>Loading subjects...</option>';
+      subjectSelect.disabled = true;
+      periodInput.value = ''; 
+      teacherNameDisplay.innerHTML = 'Assigned Teacher: <strong>Loading...</strong>'; 
+      updateButtonStates();
+
+      try {
+        const res = await fetch(`/api/classes/${classId}`, { 
+          headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        
+        if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.error || 'Failed to load class details.');
+        }
+
+        const data = await res.json();
+        
+        // Update Teacher Name Display
+        teacherNameDisplay.innerHTML = `Assigned Teacher: <strong>${data.teacher_name || 'N/A'}</strong>`;
+        
+        // Populate Subject Select
+        subjectSelect.innerHTML = '<option value="" disabled selected>Select a subject...</option>';
+        
+        if (data.subjects && data.subjects.length) {
+          data.subjects.forEach(subjectName => {
+            const option = document.createElement('option');
+            option.value = subjectName;
+            option.textContent = subjectName;
+            subjectSelect.appendChild(option);
+          });
+        } else {
+          subjectSelect.innerHTML = '<option disabled>No subjects assigned</option>';
+        }
+        
+        subjectSelect.disabled = false;
+        updateButtonStates();
+
+      } catch(err) {
+        Swal.fire('Error', err.message, 'error');
+        subjectSelect.innerHTML = '<option disabled>Error loading subjects</option>';
+        teacherNameDisplay.innerHTML = 'Assigned Teacher: <strong>Error loading details</strong>';
+      }
+    }
+    
+    // Listener to trigger loading details
+    classSelectAttendance.addEventListener('change', (e) => {
+      loadClassDetails(e.target.value);
+    });
+
+
+    // --- 4. Class Initialization (Unchanged) ---
+    async function loadClasses() {
+      const accessToken = localStorage.getItem('jwt_token');
+      if (!accessToken) {
+          Swal.fire('Error', 'Authentication required.', 'error');
+          return;
+      }
+      
+      try {
+        const res = await fetch('/api/classes', { headers: { Authorization: `Bearer ${accessToken}` }});
+        if (!res.ok) throw new Error('Failed to load classes');
+        const data = await res.json();
+        
+        classSelectAttendance.innerHTML = '';
+        if (!data.classes || !data.classes.length) {
+          classSelectAttendance.innerHTML = '<option disabled selected>No classes found</option>';
+          return;
+        }
+        
+        classSelectAttendance.innerHTML = '<option value="" disabled selected>Select a class...</option>';
+        data.classes.forEach(c => {
+          const option = document.createElement('option');
+          option.value = c.id;
+          option.textContent = c.name;
+          classSelectAttendance.appendChild(option);
+        });
+        updateButtonStates(); 
+      } catch(err) {
+        Swal.fire('Error', err.message, 'error');
+        classSelectAttendance.innerHTML = '<option disabled selected>Error loading classes</option>';
+      }
+    }
+
+
+    // --- 5. Camera Management (Unchanged) ---
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        video.srcObject = stream;
+        video.onloadedmetadata = () => {
+          video.play();
+          updateButtonStates(); 
+        };
+      } catch(error) {
+        Swal.fire('Error', 'Cannot access camera: ' + error.message, 'error');
+        captureBtn.disabled = true;
+      }
+    }
+
+    function captureFrame() {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL('image/jpeg');
+    }
+
+
+    // --- 6. Event Handlers (Capture Button Unchanged) ---
+    
+    captureBtn.addEventListener('click', async () => {
+      statusDiv.textContent = '';
+      resultsDiv.innerHTML = '';
+      
+      const classId = classSelectAttendance.value;
+      const periodValue = periodInput.value.trim();
+      // Add trim for safety (Fix from previous iteration)
+      const subjectValue = subjectSelect.value.trim(); 
+      
+      if (!classId || !periodValue || !subjectValue) {
+        Swal.fire('Warning', 'Please select Class, Period, and Subject.', 'warning');
+        return;
+      }
+
+      const imageBase64 = captureFrame();
+      const accessToken = localStorage.getItem('jwt_token');
+
+      captureBtn.disabled = true;
+      statusDiv.textContent = 'Processing attendance...';
+
+      try {
+        const response = await fetch(`/api/classes/${classId}/attendance/live`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          body: JSON.stringify({ 
+            image_data: imageBase64,
+            period: periodValue, 
+            subject: subjectValue 
+          })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error || 'Failed to process attendance');
+        }
+
+        const data = await response.json();
+        statusDiv.textContent = data.message;
+        
+        // Display Logic
+        if (data.identified_students && data.identified_students.length) {
+          const ul = document.createElement('ul');
+          
+          const header = document.createElement('p');
+          header.innerHTML = `<strong>Attendance Snapshot (${new Date().toLocaleTimeString()}):</strong>`;
+          resultsDiv.appendChild(header);
+
+          data.identified_students.forEach(student => {
+            const li = document.createElement('li');
+            const statusText = student.status === 'Present' ? 'is Present' : 'is Absent';
+            
+            li.innerHTML = `&bull; <strong>${student.name}</strong> ${statusText}`;
+            li.classList.add(student.status.toLowerCase());
+            ul.appendChild(li);
+          });
+          resultsDiv.appendChild(ul);
+        } else if (data.message === "Face Match Not Found!! Try Again") {
+              const p = document.createElement('p');
+              p.innerHTML = `<strong>No recognized faces in this capture.</strong> Please ensure the camera is clearly focused.`;
+              resultsDiv.appendChild(p);
+        }
+        
+        if (data.unidentified_faces && data.unidentified_faces > 0) {
+              const p = document.createElement('p');
+              p.textContent = `Unidentified faces detected: ${data.unidentified_faces}.`;
+              resultsDiv.appendChild(p);
+          }
+
+      } catch(error) {
+        statusDiv.textContent = '';
+        Swal.fire('Error', error.message, 'error');
+      } finally {
+        updateButtonStates();
+      }
+    });
+
+    
+    // --- END SESSION BUTTON WITH CHECKBOXES (MODIFIED) ---
+    endSessionBtn.addEventListener('click', async () => {
+      const classId = classSelectAttendance.value;
+      const periodValue = periodInput.value.trim();
+      // Add trim for safety (Fix from previous iteration)
+      const subjectValue = subjectSelect.value.trim();
+
+      if (!classId || !periodValue || !subjectValue) {
+        Swal.fire('Warning', 'Please select a Class, enter a Period, and Subject.', 'warning');
+        return;
+      }
+
+      const accessToken = localStorage.getItem('jwt_token');
+      
+      try {
+        // 1. Fetch absent students from backend
+        const response = await fetch(`/api/classes/${classId}/attendance/absent`, {
+          method: 'POST', 
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            period: periodValue,
+            subject: subjectValue 
+          })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.error || 'Failed to fetch absent students');
+        }
+
+        const data = await response.json();
+        const absentStudents = data.absent_students || [];
+
+        if (!absentStudents.length) {
+          Swal.fire('Info', 'All students are marked present, or no students were registered for this class.', 'info');
+          return;
+        }
+
+        // 2. Generate HTML with Checkboxes for Absent Students
+        const studentCheckboxHTML = absentStudents.map((s, index) => {
+          // Set 'checked' only for the first student (index 0)
+          const isChecked = index === 0 ? 'checked' : ''; 
+          return `
+            <div>
+              <input type="checkbox" class="absent-checkbox" id="absent-${s.student_id}" name="absent_student" value="${s.student_id}" ${isChecked}>
+              <label for="absent-${s.student_id}">${s.name}</label>
+            </div>
+          `;
+        }).join('');
+        
+        // Combine Select All button and the scrollable list
+        const dialogContentHTML = `
+          <p style="font-weight: bold; margin-bottom: 10px;">Students NOT marked present:</p>
+          <button id="select-all-btn" class="btn btn-sm btn-outline-secondary mb-3">Select All</button>
+          <p style="font-size: 0.85em; color: #6c757d;">(Uncheck any student who was actually present.)</p>
+          <div id="absent-list-container" style="text-align: left; max-height: 250px; overflow-y: auto; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            ${studentCheckboxHTML}
+          </div>
+        `;
+        
+        // Use the custom HTML list for confirmation
+        const result = await Swal.fire({
+          title: 'Confirm Absent Students',
+          html: dialogContentHTML,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Finalize Absents',
+          cancelButtonText: 'Cancel',
+          focusConfirm: false,
+          
+          // Logic to attach event listener after the dialog opens
+          didOpen: () => {
+            const selectAllBtn = document.getElementById('select-all-btn');
+            const checkboxes = document.querySelectorAll('.absent-checkbox');
+            let allChecked = false; // Initial state based on your requirement (only 1st checked)
+            
+            selectAllBtn.textContent = 'Select All';
+            
+            selectAllBtn.addEventListener('click', () => {
+              allChecked = !allChecked;
+              checkboxes.forEach(cb => {
+                cb.checked = allChecked;
+              });
+              selectAllBtn.textContent = allChecked ? 'Deselect All' : 'Select All';
+            });
+          },
+
+          preConfirm: () => {
+            // 3. Logic to read which checkboxes are checked
+            const container = document.getElementById('absent-list-container');
+            // Use the new class selector to find checkboxes reliably
+            const checkedBoxes = container.querySelectorAll('.absent-checkbox:checked');
+            
+            const finalAbsentIds = Array.from(checkedBoxes).map(cb => parseInt(cb.value));
+            
+            // Filter the original list of student objects based on the checked IDs
+            return absentStudents.filter(s => finalAbsentIds.includes(s.student_id));
+          }
+        });
+
+        if (result.isConfirmed && result.value) {
+          const finalAbsentList = result.value;
+
+          if (finalAbsentList.length === 0) {
+            Swal.fire('Info', 'All students accounted for. Session ended.', 'info');
+            return;
+          }
+
+          // 4. Confirm and update absents in backend
+          const confirmRes = await fetch(`/api/classes/${classId}/attendance/absent/confirm`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+              period: periodValue, 
+              subject: subjectValue, 
+              absent_students: finalAbsentList // Send the final, filtered list
+            })
+          });
+
+          if (!confirmRes.ok) {
+            const errData = await confirmRes.json();
+            throw new Error(errData.error || 'Failed to mark absents');
+          }
+
+          Swal.fire('Success', 'Attendance finalized. Session ended.', 'success');
+          resultsDiv.innerHTML = ''; // Clear live attendance display
+        }
+
+      } catch (error) {
+        Swal.fire('Error', error.message, 'error');
+      }
+    });
+
+
+    // --- 7. Initialization (Unchanged) ---
+    loadClasses();
+    startCamera();
+
+  });
+</script>
+{% endblock %}
